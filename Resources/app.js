@@ -14,7 +14,7 @@ var win1 = Titanium.UI.createWindow({
 });
 var tab1 = Titanium.UI.createTab({  
     icon:'KS_nav_views.png',
-    title:'Tab 1',
+    title:'Introduction',
     window:win1
 });
 
@@ -29,7 +29,7 @@ var win2 = Titanium.UI.createWindow({
 });
 var tab2 = Titanium.UI.createTab({  
     icon:'KS_nav_ui.png',
-    title:'Tab 2',
+    title:'Map',
     window:win2
 });
 
@@ -42,7 +42,7 @@ var win3 = Titanium.UI.createWindow({
 });
 var tab3 = Titanium.UI.createTab({  
     icon:'KS_nav_ui.png',
-    title:'Record Tab',
+    title:'Record',
     window:win3
 });
 Ti.include('win3.js');
@@ -55,7 +55,7 @@ var win4 = Titanium.UI.createWindow({
 });
 var tab4 = Titanium.UI.createTab({  
     icon:'KS_nav_ui.png',
-    title:'Playback Tab',
+    title:'Playback',
     window:win4
 });
 

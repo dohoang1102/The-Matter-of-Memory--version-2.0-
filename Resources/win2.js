@@ -96,10 +96,6 @@ if (Titanium.Geolocation.locationServicesEnabled)
 
 ///////////////////////////////////////////////////////////////////////
 
-//
-//	If location changes within 30m in any direction. Grab current coordinates, send HTTPClient request to server and redraw Map Annotations, update Map with annotations.
-//
-
 var geo_listener = function(e){
 try {
 	//	With the Geolocation triggered from a change in 100 meters, Geolocation will find out the user's coordinates and set them to the global variables.
@@ -230,12 +226,3 @@ searchButton.addEventListener('click', region_changing);
 
 win2.add(mapView);
 //win2.setToolbar([flexSpace,searchButton,flexSpace]);
-
-//
-//	This Geolocation function will only fire the first time the App is opened, afterwards the other eventlistener will handle the updates.
-//
-Titanium.Geolocation.getCurrentPosition(function(e){
-	regionLatitude = e.coords.latitude;
-	regionLongitude = e.coords.longitude;
-	//region_changing();
-	});

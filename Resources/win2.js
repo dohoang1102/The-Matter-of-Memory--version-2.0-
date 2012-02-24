@@ -64,11 +64,11 @@ Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
 //	Set Distance filter. This dictates how often an event fires based on the distance the device moves. This value is in meters. 10 meters = 33 feet.
 Titanium.Geolocation.distanceFilter = 10;
 
-//	Start by creating the Map with these current coordinates, these being specific for Baltimore, Maryland.
+//	Start by creating the Map with these current coordinates.
 var mapView = Titanium.Map.createView({
     mapType: Titanium.Map.STANDARD_TYPE,
     animate:true,
-    region: {latitude:39.30109620906199, longitude:-76.60234451293945, latitudeDelta:0.001, longitudeDelta:0.001}, //latitude:39.30109620906199 longitude:-76.60234451293945
+    region: {latitudeDelta:0.1, longitudeDelta:0.1}, //latitude:39.30109620906199 longitude:-76.60234451293945
     regionFit:true,
     userLocation:true,
     visible: true
@@ -78,28 +78,20 @@ var mapView = Titanium.Map.createView({
 //  SHOW CUSTOM ALERT IF DEVICE HAS GEO TURNED OFF
 //
 
-if (Titanium.Geolocation.locationServicesEnabled==false)
+if (Titanium.Geolocation.locationServicesEnabled)
 {
+	Ti.Geolocation.purpose = 'Get Current Location';
+	Ti.Geolocation.addEventListener('location', function(e) {
+		if (e.error) {
+			Ti.API.error('Can not get your current location: ' + e.error);
+		} else {
+			Ti.API.info(e.coords);
+			Ti.App.info('got your location', JSON.stringify(e));
+			Ti.App.fireEvent('location.updated', e.coords);
+		}
+	});
+	} else {
 	Titanium.UI.createAlertDialog({title:'Geolocation Off', message:'Your device has location services turned off - please turn it on.'}).show();
-}
-else
-{
-	if (Titanium.Platform.name != 'android') {
-		var authorization = Titanium.Geolocation.locationServicesAuthorization;
-		Ti.API.log('Authorization: '+authorization);
-		if (authorization == Titanium.Geolocation.AUTHORIZATION_DENIED) {
-			Ti.UI.createAlertDialog({
-				title:'Geolocation Off',
-				message:'You have disallowed this app from running geolocation services.'
-			}).show();
-		}
-		else if (authorization == Titanium.Geolocation.AUTHORIZATION_RESTRICTED) {
-			Ti.UI.createAlertDialog({
-				title:'Geolocation Off',
-				message:'Your system has disallowed this app from running geolocation services.'
-			}).show();
-		}
-	}
 }; //end of Alert to see if you have geolocaiton turned on.
 
 ///////////////////////////////////////////////////////////////////////
@@ -151,6 +143,7 @@ var searching = function(e) {
 	regionLongitude = e.longitude;
 	Ti.API.info("latitude from regionChanged : " + regionLatitude);
 	Ti.API.info("longitude from regionChanged : "+ regionLongitude);
+	win2.setToolbar([flexSpace,searchButton,flexSpace]);
 };
 
 var region_changing = function(){	
@@ -228,12 +221,9 @@ var region_changing = function(){
 	xhr.send();
 	};
 
-//	This will redraw the mapView map, whenever the user changes regions.
-mapView.addEventListener('regionChanged', searching);
-
 //	This is needed for the error within Titanium Mobile that when removeing the 'regionChanged' event listener. It will freeze the map.
 mapView.addEventListener('singletap', function(){
-	//dummy function
+	searching();
 });
 
 searchButton.addEventListener('click', region_changing);
@@ -247,5 +237,5 @@ win2.add(mapView);
 Titanium.Geolocation.getCurrentPosition(function(e){
 	regionLatitude = e.coords.latitude;
 	regionLongitude = e.coords.longitude;
-	region_changing();
+	//region_changing();
 	});

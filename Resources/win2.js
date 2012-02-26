@@ -7,6 +7,20 @@
 //																												  //
 //	Hector Leiva - 2012																							  //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+win2.backgroundColor = 'black';
+
+//	create the label - Introduction
+var titleLabel = Titanium.UI.createLabel({
+    color:'#333333',
+    height:18,
+    width:210,
+    top:10,
+    text:'Map',
+    textAlign:'center',
+    font:{fontFamily:'Arial',fontSize:20,fontWeight:'bold'},
+    shadowColor:'#eee',shadowOffset:{x:0,y:1}
+});
+win2.setTitleControl(titleLabel);
 
 //
 //	Globally Declared Variables
@@ -15,6 +29,11 @@
 //	The coordinate variables that will constantly change throughout eventlisteners inside the script
 var latitude;
 var longitude;
+
+Ti.App.addEventListener('location.updated', function(e) {
+	latitude = e.coords.latitude,
+	longitude = e.coords.longitude
+});
 //	These are the global variables are to calculate the region changes
 var regionLatitude;
 var regionLongitude;
@@ -59,25 +78,6 @@ var lostServer = Ti.UI.createAlertDialog({
 //	Begin Geo Location
 //
 
-Titanium.Geolocation.purpose = "Recieve User Location";
-Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
-//	Set Distance filter. This dictates how often an event fires based on the distance the device moves. This value is in meters. 10 meters = 33 feet.
-Titanium.Geolocation.distanceFilter = 10;
-
-//	Start by creating the Map with these current coordinates.
-var mapView = Titanium.Map.createView({
-    mapType: Titanium.Map.STANDARD_TYPE,
-    animate:true,
-    region: {latitudeDelta:0.1, longitudeDelta:0.1}, //latitude:39.30109620906199 longitude:-76.60234451293945
-    regionFit:true,
-    userLocation:true,
-    visible: true
-});
-
-//
-//  SHOW CUSTOM ALERT IF DEVICE HAS GEO TURNED OFF
-//
-
 if (Titanium.Geolocation.locationServicesEnabled)
 {
 	Ti.Geolocation.purpose = 'Get Current Location';
@@ -93,6 +93,38 @@ if (Titanium.Geolocation.locationServicesEnabled)
 	} else {
 	Titanium.UI.createAlertDialog({title:'Geolocation Off', message:'Your device has location services turned off - please turn it on.'}).show();
 }; //end of Alert to see if you have geolocaiton turned on.
+
+Titanium.Geolocation.purpose = "Receive User Location";
+Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_NEAREST_TEN_METERS;
+//	Set Distance filter. This dictates how often an event fires based on the distance the device moves. This value is in meters. 10 meters = 33 feet.
+Titanium.Geolocation.distanceFilter = 10;
+
+//	Start by creating the Map with these current coordinates.
+var mapView = Titanium.Map.createView({
+    mapType: Titanium.Map.STANDARD_TYPE,
+    region: {latitudeDelta:0.1, longitudeDelta:0.1}, //latitude:39.30109620906199 longitude:-76.60234451293945
+    animate:true,
+    regionFit:true,
+    userLocation:true,
+});
+
+mapView.addEventListener('complete', function(e) {
+	Ti.API.info('complete');
+	Ti.API.info(e);
+});
+mapView.addEventListener('error', function(e) {
+	Ti.API.info('error');
+	Ti.API.info(e);
+});
+mapView.addEventListener('regionChanged', function(e) {
+	Ti.API.info('regionChanged');
+	Ti.API.info(e);
+	mapView.setLocation({
+		latitude: e.coords.latitude,
+		longitude: e.coords.longitude,
+		animate: true
+	});
+});
 
 ///////////////////////////////////////////////////////////////////////
 

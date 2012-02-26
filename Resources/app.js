@@ -8,9 +8,10 @@ var tabGroup = Titanium.UI.createTabGroup();
 //
 // create base UI tab and root window
 //
+
 var win1 = Titanium.UI.createWindow({  
-    title:'Introduction Title',
-    backgroundColor:'#fff'
+    backgroundColor:'#000000',
+    barColor: '#999999'
 });
 var tab1 = Titanium.UI.createTab({  
     icon:'KS_nav_views.png',
@@ -19,13 +20,12 @@ var tab1 = Titanium.UI.createTab({
 });
 
 Ti.include('win1.js');
-win1.add(label1);
 //
 // create controls tab and root window
 //
 var win2 = Titanium.UI.createWindow({  
-    title:'Map',
-    backgroundColor:'#fff'
+    backgroundColor:'#000000',
+    barColor: '#999999'
 });
 var tab2 = Titanium.UI.createTab({  
     icon:'KS_nav_ui.png',
@@ -37,8 +37,8 @@ Ti.include('win2.js');
 
 
 var win3 = Titanium.UI.createWindow({  
-    title:'Record Title',
-    backgroundColor:'#fff'
+    backgroundColor:'#000000',
+    barColor: '#999999'
 });
 var tab3 = Titanium.UI.createTab({  
     icon:'KS_nav_ui.png',
@@ -50,8 +50,8 @@ win3.add(label3);
 
 
 var win4 = Titanium.UI.createWindow({  
-    title:'Playback Title',
-    backgroundColor:'#fff'
+    backgroundColor:'#000000',
+    barColor: '#999999'
 });
 var tab4 = Titanium.UI.createTab({  
     icon:'KS_nav_ui.png',

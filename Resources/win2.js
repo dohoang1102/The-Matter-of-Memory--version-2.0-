@@ -8,6 +8,7 @@
 //	Hector Leiva - 2012																							  //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 win2.backgroundColor = 'black';
+Ti.include('file_with_location.js');
 
 //	create the label - Introduction
 var titleLabel = Titanium.UI.createLabel({
@@ -30,10 +31,6 @@ win2.setTitleControl(titleLabel);
 var latitude;
 var longitude;
 
-Ti.App.addEventListener('location.updated', function(e) {
-	latitude = e.coords.latitude,
-	longitude = e.coords.longitude
-});
 //	These are the global variables are to calculate the region changes
 var regionLatitude;
 var regionLongitude;
@@ -78,6 +75,7 @@ var lostServer = Ti.UI.createAlertDialog({
 //	Begin Geo Location
 //
 
+
 if (Titanium.Geolocation.locationServicesEnabled)
 {
 	Ti.Geolocation.purpose = 'Get Current Location';
@@ -85,9 +83,7 @@ if (Titanium.Geolocation.locationServicesEnabled)
 		if (e.error) {
 			Ti.API.error('Can not get your current location: ' + e.error);
 		} else {
-			Ti.API.info(e.coords);
-			Ti.App.info('got your location', JSON.stringify(e));
-			Ti.App.fireEvent('location.updated', e.coords);
+			Ti.API.info('got a location ' + JSON.stringify(e));
 		}
 	});
 	} else {
@@ -115,15 +111,24 @@ mapView.addEventListener('complete', function(e) {
 mapView.addEventListener('error', function(e) {
 	Ti.API.info('error');
 	Ti.API.info(e);
+	win2.setToolbar(null,{animated:true});
 });
-mapView.addEventListener('regionChanged', function(e) {
-	Ti.API.info('regionChanged');
-	Ti.API.info(e);
-	mapView.setLocation({
-		latitude: e.coords.latitude,
-		longitude: e.coords.longitude,
+mapView.addEventListener('regionChanged', function() {
+	currentLocation(gpsCallback);
+	function gpsCallback(_coords) {
+	if (_coords) {
+		var updatedLatitude = String.format(_coords.latitude);
+		var updatedLongitude = String.format(_coords.longitude);
+		mapView.setLocation({
+		latitude: updatedLatitude,
+		longitude: updatedLongitude,
 		animate: true
-	});
+			});
+		}
+	}
+	
+	Ti.API.info('regionChanged');
+	win2.setToolbar([flexSpace,searchButton,flexSpace]);
 });
 
 ///////////////////////////////////////////////////////////////////////

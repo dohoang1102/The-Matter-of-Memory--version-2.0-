@@ -14,11 +14,3 @@ var titleLabel = Titanium.UI.createLabel({
     shadowColor:'#eee',shadowOffset:{x:0,y:1}
 });
 win4.setTitleControl(titleLabel);
-
-var label4 = Titanium.UI.createLabel({
-	color:'#999',
-	text:'Playback',
-	font:{fontSize:20,fontFamily:'Helvetica Neue'},
-	textAlign:'center',
-	width:'auto'
-});

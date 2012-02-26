@@ -18,7 +18,6 @@ var tab1 = Titanium.UI.createTab({
     title:'Introduction',
     window:win1
 });
-
 Ti.include('win1.js');
 //
 // create controls tab and root window
@@ -32,7 +31,6 @@ var tab2 = Titanium.UI.createTab({
     title:'Map',
     window:win2
 });
-
 Ti.include('win2.js');
 
 
@@ -46,8 +44,6 @@ var tab3 = Titanium.UI.createTab({
     window:win3
 });
 Ti.include('win3.js');
-win3.add(label3);
-
 
 var win4 = Titanium.UI.createWindow({  
     backgroundColor:'#000000',
@@ -58,9 +54,7 @@ var tab4 = Titanium.UI.createTab({
     title:'Playback',
     window:win4
 });
-
 Ti.include('win4.js');
-win4.add(label4);
 //
 //  add tabs
 //

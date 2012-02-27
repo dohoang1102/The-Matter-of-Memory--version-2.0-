@@ -8,7 +8,22 @@
 //	Hector Leiva - 2012																							  //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 win2.backgroundColor = 'black';
-Ti.include('file_with_location.js');
+Ti.include('currentLocation.js');
+
+// Global Listener
+Ti.App.addEventListener('location.updated', function(coords){
+	Ti.API.debug(JSON.stringify(coords));
+	Ti.API.info('from Global eventlistener :' + JSON.stringify(coords.longitude));
+	var latitude = JSON.stringify(coords.latitude);
+	var longitude = JSON.stringify(coords.longitude);
+});
+
+Ti.App.addEventListener('current.position', function(coords){
+	Ti.API.info('from Global eventlistener & current position longitude: ' + JSON.stringify(coords.longitude));
+	Ti.API.info('from Global eventListener & current position latitude : ' + JSON.stringify(coords.latitude));
+	var currentLatitude = JSON.stringify(coords.latitude);
+	var currentLongitude = JSON.stringify(coords.longitude);
+});
 
 //	create the label - Introduction
 var titleLabel = Titanium.UI.createLabel({
@@ -26,14 +41,6 @@ win2.setTitleControl(titleLabel);
 //
 //	Globally Declared Variables
 //
-
-//	The coordinate variables that will constantly change throughout eventlisteners inside the script
-var latitude;
-var longitude;
-
-//	These are the global variables are to calculate the region changes
-var regionLatitude;
-var regionLongitude;
 
 //	Variables that are needed to accept the incoming JSON data and create arrays needed to make map annotations
 var incomingData;
@@ -71,34 +78,9 @@ var lostServer = Ti.UI.createAlertDialog({
 		message:'There was an issue connecting to the server, please wait and try again.'
 		});
 		
-//
-//	Begin Geo Location
-//
-
-
-if (Titanium.Geolocation.locationServicesEnabled)
-{
-	Ti.Geolocation.purpose = 'Get Current Location';
-	Ti.Geolocation.addEventListener('location', function(e) {
-		if (e.error) {
-			Ti.API.error('Can not get your current location: ' + e.error);
-		} else {
-			Ti.API.info('got a location ' + JSON.stringify(e));
-		}
-	});
-	} else {
-	Titanium.UI.createAlertDialog({title:'Geolocation Off', message:'Your device has location services turned off - please turn it on.'}).show();
-}; //end of Alert to see if you have geolocaiton turned on.
-
-Titanium.Geolocation.purpose = "Receive User Location";
-Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_NEAREST_TEN_METERS;
-//	Set Distance filter. This dictates how often an event fires based on the distance the device moves. This value is in meters. 10 meters = 33 feet.
-Titanium.Geolocation.distanceFilter = 10;
-
 //	Start by creating the Map with these current coordinates.
 var mapView = Titanium.Map.createView({
     mapType: Titanium.Map.STANDARD_TYPE,
-    region: {latitudeDelta:0.1, longitudeDelta:0.1}, //latitude:39.30109620906199 longitude:-76.60234451293945
     animate:true,
     regionFit:true,
     userLocation:true,
@@ -108,31 +90,41 @@ mapView.addEventListener('complete', function(e) {
 	Ti.API.info('complete');
 	Ti.API.info(e);
 });
+
 mapView.addEventListener('error', function(e) {
 	Ti.API.info('error');
 	Ti.API.info(e);
 	win2.setToolbar(null,{animated:true});
 });
-mapView.addEventListener('regionChanged', function() {
-	currentLocation(gpsCallback);
-	function gpsCallback(_coords) {
-	if (_coords) {
-		var updatedLatitude = String.format(_coords.latitude);
-		var updatedLongitude = String.format(_coords.longitude);
+
+// Getting a location now is in its own file and it is called by using a function onto the page. Below is an example of setting the Map View to run everytime there is a movement on the screen.
+
+movingLocation(gpsCallback);
+
+function gpsCallback(_coords){
+	Ti.API.info(' testing : ' + _coords.latitude);
 		mapView.setLocation({
-		latitude: updatedLatitude,
-		longitude: updatedLongitude,
+		latitude: _coords.latitude,
+		longitude: _coords.longitude,
 		animate: true
-			});
-		}
-	}
-	
+	});
+}
+
+/*
+mapView.addEventListener('regionChanged', function () {
+	Ti.API.info(' Testing current latitude :' + _coords.latitude);
+	mapView.setLocation({
+	latitude: _coords.latitude,
+	longitude: _coords.longitude,
+	animate: true
+	});
 	Ti.API.info('regionChanged');
-	win2.setToolbar([flexSpace,searchButton,flexSpace]);
+	Ti.API.info('currentLocation : Latitude :' + _coords.latitude);
+	Ti.API.info('currentLocation : Longitude :' + _coords.longitude);
 });
-
+*/
 ///////////////////////////////////////////////////////////////////////
-
+/*
 var geo_listener = function(e){
 try {
 	//	With the Geolocation triggered from a change in 100 meters, Geolocation will find out the user's coordinates and set them to the global variables.
@@ -161,7 +153,7 @@ try {
 };
 
 Titanium.Geolocation.addEventListener('location', geo_listener);
-
+*/
 
 //	This function will run though the 'annotations' array() and remove them from the mapView. Then will set them to an empty array.
 function removeAnnotations(){
@@ -179,9 +171,9 @@ var searching = function(e) {
 	win2.setToolbar([flexSpace,searchButton,flexSpace]);
 };
 
-var region_changing = function(){	
-	Ti.API.info('from region_changing latitude :' + regionLatitude);
-	Ti.API.info('from region_changing longitude :' + regionLongitude);
+var region_changing = function(e, h){	
+	Ti.API.info('from region_changing latitude :' + e);
+	Ti.API.info('from region_changing longitude :' + h);
 	var timeout = 0;
 	
 	//	Create view that will block out the other Table options
@@ -199,7 +191,7 @@ var region_changing = function(){
 	//	Remove any previously set up annotations
 	removeAnnotations();
 	//	Contact server
-	var geturl="http://thematterofmemory.com/thematterofmemory_scripts/mappingcoordinates.php?latitude=" + regionLatitude + "&longitude=" + regionLongitude;
+	var geturl="http://thematterofmemory.com/thematterofmemory_scripts/mappingcoordinates.php?latitude=" + e + "&longitude=" + h;
 	Titanium.API.info('Region Changed: ' + geturl);
 	
 	var xhr = Titanium.Network.createHTTPClient();
@@ -259,7 +251,7 @@ mapView.addEventListener('singletap', function(){
 	searching();
 });
 
-searchButton.addEventListener('click', region_changing);
+//searchButton.addEventListener('click', region_changing);
 
 win2.add(mapView);
 //win2.setToolbar([flexSpace,searchButton,flexSpace]);

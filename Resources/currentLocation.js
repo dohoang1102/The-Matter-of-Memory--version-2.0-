@@ -40,7 +40,7 @@ function movingLocation(_callback){
 		if (e.error) {
 		Ti.API.error('Error: ' + e.error);
 		return;
-	} else {
+		} else {
 		Ti.API.info('got location from Geolocation event listener :' + JSON.stringify(e.coords));
 		Ti.App.fireEvent('location.updated',e.coords);
 		

@@ -82,24 +82,25 @@ var lostServer = Ti.UI.createAlertDialog({
 var mapView = Titanium.Map.createView({
     mapType: Titanium.Map.STANDARD_TYPE,
     animate:true,
-    regionFit:true,
+    regionFit:false,
     userLocation:true,
 });
 
-mapView.addEventListener('complete', function(e) {
-	Ti.API.info('complete');
-	Ti.API.info(e);
+// Create an event where once the map loads or if the region changes, to bring up a search button that will look on the map for near-by annotations. To
+// load it from just the map loading would cause too many calls if you are zoomed in - maybe overloading the amount of requests.
+mapView.addEventListener('complete', function(e){
+	Ti.API.info('mapView completed.');
 });
 
 mapView.addEventListener('error', function(e) {
 	Ti.API.info('error');
 	Ti.API.info(e);
-	win2.setToolbar(null,{animated:true});
 });
 
 // Getting a location now is in its own file and it is called by using a function onto the page. Below is an example of setting the Map View to run everytime there is a movement on the screen.
 
 movingLocation(gpsCallback);
+movingLocation(gpsAnnotations);
 
 function gpsCallback(_coords){
 	Ti.API.info(' testing : ' + _coords.latitude);
@@ -110,19 +111,6 @@ function gpsCallback(_coords){
 	});
 }
 
-/*
-mapView.addEventListener('regionChanged', function () {
-	Ti.API.info(' Testing current latitude :' + _coords.latitude);
-	mapView.setLocation({
-	latitude: _coords.latitude,
-	longitude: _coords.longitude,
-	animate: true
-	});
-	Ti.API.info('regionChanged');
-	Ti.API.info('currentLocation : Latitude :' + _coords.latitude);
-	Ti.API.info('currentLocation : Longitude :' + _coords.longitude);
-});
-*/
 ///////////////////////////////////////////////////////////////////////
 /*
 var geo_listener = function(e){
@@ -162,7 +150,7 @@ function removeAnnotations(){
     }
     annotations = [];
 }
-
+/*
 var searching = function(e) {
 	regionLatitude = e.latitude;
 	regionLongitude = e.longitude;
@@ -170,7 +158,46 @@ var searching = function(e) {
 	Ti.API.info("longitude from regionChanged : "+ regionLongitude);
 	win2.setToolbar([flexSpace,searchButton,flexSpace]);
 };
+*/
 
+function gpsAnnotations(_coords){
+	removeAnnotations();
+	var geturl="http://thematterofmemory.com/thematterofmemory_scripts/mappingcoordinates.php?latitude=" + _coords.latitude + "&longitude=" + _coords.longitude;
+	Titanium.API.info('Region Changed: ' + geturl);
+	
+	var xhr = Titanium.Network.createHTTPClient();
+	xhr.open('GET', geturl, false);
+	xhr.onerror = function()
+		{
+			Ti.API.info('There was an error trying to connect to the server.')
+				};
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//	Upon getting a server response, the function will make that response equal to an array and run through the array until the response is empty.	 //
+	//	For each latitude and longitude value that is returned from the server, they will be a latitude and longitude value to set for the annotations.	 //
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	xhr.onload = function(){
+	Titanium.API.info('From win2.js & The Matter of Memory.com: ' + this.responseText);
+	incomingData = JSON.parse(this.responseText);
+	for (var i = 0; i < incomingData.length; i++){
+	recorded = incomingData[i];
+		plotPoints = Titanium.Map.createAnnotation({
+		latitude: recorded.Latitude,
+		longitude: recorded.Longitude,
+		title: 'Memory',
+		animate:true
+		});
+		plotPoints.pincolor = Titanium.Map.ANNOTATION_GREEN;
+	
+	mapView.addAnnotation(plotPoints);
+	annotations.push(plotPoints);
+		}; // end of for loop
+	}; // end of xhr.onload()
+
+	xhr.send();
+	Ti.API.info('complete from gpsAnnotations');
+};
+
+/*
 var region_changing = function(e, h){	
 	Ti.API.info('from region_changing latitude :' + e);
 	Ti.API.info('from region_changing longitude :' + h);
@@ -245,7 +272,7 @@ var region_changing = function(e, h){
 
 	xhr.send();
 	};
-
+*/
 //	This is needed for the error within Titanium Mobile that when removeing the 'regionChanged' event listener. It will freeze the map.
 mapView.addEventListener('singletap', function(){
 	searching();

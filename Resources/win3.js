@@ -337,7 +337,7 @@ win3.add(playback);
 //	Label: Playback Body
 //
 var playbackText = Titanium.UI.createLabel({
-	text: 'Playback and listen to your memory before submitting.',
+	text: 'Listen to your memory before submitting.',
 	left:30,
 	top:180,
 	width:250,

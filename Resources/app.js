@@ -38,6 +38,7 @@ var win3 = Titanium.UI.createWindow({
     backgroundColor:'#000000',
     barColor: '#999999'
 });
+
 var tab3 = Titanium.UI.createTab({  
     icon:'KS_nav_ui.png',
     title:'Record',

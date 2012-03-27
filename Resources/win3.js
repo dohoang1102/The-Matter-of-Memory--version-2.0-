@@ -27,6 +27,13 @@ newDir.createDirectory();
 Titanium.API.info('Path to newdir: ' + newDir.nativePath);
 };
 
+// Creating the modal window that will come up once the "Record" button is pressed
+var modal = Ti.UI.createWindow({
+	navBarHidden:false,
+	backgroundColor:'#333',
+	barColor: '#CC0000'
+});
+
 //
 //	Recording Audio Global Identifiers
 //
@@ -40,7 +47,9 @@ var newAudiofile = 'recording.mp4';
 var file_recorded = Titanium.Filesystem.getFile(newDir.nativePath, newAudiofile);
 upload_audio = file_recorded.read();
 
+//
 // Countdown Timer
+//
 var countDown =  function( m , s, fn_tick, fn_end  ) {
 	return {
 		total_sec:m*60+s,
@@ -60,13 +69,14 @@ var countDown =  function( m , s, fn_tick, fn_end  ) {
 						self.time = { m : parseInt(self.total_sec/60), s: "0" + (self.total_sec%60) };
 					}
 					if (self.total_sec < 10) {
-						self.time = { m : parseInt(self.total_sec/60), s: "0" + (self.total_sec%60) };
+						self.time = { m : parseInt(self.total_sec/60), s:"0" + (self.total_sec%60) };
 					}
 					fn_tick();
 				}
 				else {
 					self.stop();
 					fn_end();
+					modal.close();
 				}
 				}, 1000 );
 			return this;
@@ -80,12 +90,14 @@ var countDown =  function( m , s, fn_tick, fn_end  ) {
 	}
 }
 
-var my_timer = new countDown(0,15, 
+var my_timer = new countDown(2,00, 
 		function() {
 			display_lbl.text = my_timer.time.m+" : "+my_timer.time.s;
 		},
 		function() {
 			alert("The time is up!");
+			modal.close();
+			stopRecording();
 		}
 	);
 
@@ -104,7 +116,7 @@ var display_lbl =  Titanium.UI.createLabel({
 	},
 	textAlign:'center'
 });
-	my_timer.set(0,15);
+	my_timer.set(2,00);
 	
 
 // default compression is Ti.Media.AUDIO_FORMAT_LINEAR_PCM
@@ -181,16 +193,10 @@ var progressBar = Titanium.UI.createProgressBar({
 //	Timeout Indicators
 var firstAlertTO;
 var secondAlertTO;
-var lastAlertTO;
 
 //
 //	Timeout - Functions and alerts
 //
-
-var alertB = Ti.UI.createAlertDialog({
-		title:'Timelimit',
-		message:'You have reached the recording limit.'
-});
 		
 var successDisplay = Ti.UI.createAlertDialog({
 		title:'Success', 
@@ -237,21 +243,6 @@ function gpsCallback(_coords){
 	newFile.write(JSON.stringify(datatoWrite));
 }
 
-/*
-	Ti.App.addEventListener('setLocationEvent', function(event){
-	latitude = event.latitude;
-	longitude = event.longitude;
-
-	var datatoWrite = {
-	"latitude":latitude,
-	"longitude":longitude
-	};
-			//Data to write?
-	var newFile = Titanium.Filesystem.getFile(newDir.nativePath,"coordinates.JSON");
-	newFile.write(JSON.stringify(datatoWrite));
-});
-
-*/	
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //																													  	  //
 //	The Following Section are for the Buttons to do one of the following: Record, Playback Recording, Submit to Server	  //
@@ -394,22 +385,6 @@ var submitText = Titanium.UI.createLabel({
 win3.add(submitText);
 
 //
-//	Label: Warning about Time limit
-//
-
-var timeLimit = Titanium.UI.createLabel({
-	text: 'There is a limit of 1 minute for recording time.',
-	left:30,
-	bottom: 20,
-	width:270,
-	textAlign:'left',
-	font:{fontSize:12,fontfamily:'Helvetica Neue',fontWeight:'bold'},
-	height:'auto',
-	color:'#fff'
-});
-win3.add(timeLimit);
-
-//
 //	Label: Warning about Time Limit - Modal Window
 //
 var timeLimitModal = Titanium.UI.createLabel({
@@ -457,11 +432,7 @@ start.addEventListener('click', function(){
 		return;
 	} else {
 		
-	var modal = Ti.UI.createWindow({
-		navBarHidden:false,
-		backgroundColor:'#333',
-		barColor: '#CC0000'
-	});
+
 	var done = Titanium.UI.createButton({
 		systemButton:Titanium.UI.iPhone.SystemButton.DONE
 	});
@@ -476,20 +447,13 @@ start.addEventListener('click', function(){
 	duration = 0;
 	modal.add(display_lbl);
 	
-	lastAlertTO = setTimeout(function(){
-		alertB.show();
-		stopRecording();
-		modal.close();
-	},180000);
-	
 	done.addEventListener('click',function()
 	{
 		my_timer.stop();
 		modal.close();
 		stopRecording();
-		clearTimeout(lastAlertTO);
 	});
-	
+	// This is the actual bit that opens Modal.
 	modal.open({modal:true});
 	}
 	
@@ -512,12 +476,11 @@ if (file == null)
 		if (sound && sound.playing)
 		{
 			setTimeout(function(){
-			tabGroup.animate({bottom:0,duration:500});
+			//tabGroup.animate({bottom:0,duration:500});
 			sound.stop();
 			sound.release();
 			sound = null;
 			playbackLabel.text = 'Playback Recording';
-			playbackImage.image = '../images/playButtonoff.gif';
 		},800);
 		} else {
 			Ti.API.info("recording file size: "+file.size);
@@ -525,19 +488,17 @@ if (file == null)
 			sound.addEventListener('complete', function()
 				{
 				setTimeout(function(){
-				tabGroup.animate({bottom:0,duration:500});
-				playbackLabel.text = 'Playback Recording';
-				playbackImage.image = '../images/playButtonoff.gif';
+				//tabGroup.animate({bottom:0,duration:500});
+				playback.title = 'Playback Recording';
 			},800);
 				});
 			if(recording.recording){
 				Titanium.UI.createAlertDialog({title:'One Moment', message:'You need to complete the recording before previewing.'}).show();
 			} else {
 			setTimeout(function(){
-			tabGroup.animate({bottom:-50, duration:500});
+			//tabGroup.animate({bottom:-50, duration:500});
 			sound.play();
-			playbackLabel.text = 'Stop Playback';
-			playbackImage.image = '../images/playButtonon.gif';
+			playback.title = 'Stop Playback';
 		},800);
 			}
 		}

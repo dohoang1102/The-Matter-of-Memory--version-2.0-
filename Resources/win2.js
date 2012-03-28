@@ -111,38 +111,6 @@ function gpsCallback(_coords){
 	});
 }
 
-///////////////////////////////////////////////////////////////////////
-/*
-var geo_listener = function(e){
-try {
-	//	With the Geolocation triggered from a change in 100 meters, Geolocation will find out the user's coordinates and set them to the global variables.
-		latitude = e.coords.latitude; 
-		longitude = e.coords.longitude;
-	//	This variable will be set to react to the new region. This includes the updated Latitude and Longitude coordinate of the user and to 'animate' to the new location.
-	//	The delta values will affect how 'zoomed' the map will reset itself for the user.
-		mapView.setLocation({
-		latitude: latitude,
-		longitude: longitude,
-		animate: true
-		});
-	
-		Ti.App.fireEvent('setLocationEvent', {
-		latitude: latitude,
-		longitude: longitude
-		});
-	} catch (err) {
-		setTimeout(function(){
-		lostServer.show();
-		},2000);
-		setTimeout(function(){
-		lostServer.hide();
-		},5000);
-	}
-};
-
-Titanium.Geolocation.addEventListener('location', geo_listener);
-*/
-
 //	This function will run though the 'annotations' array() and remove them from the mapView. Then will set them to an empty array.
 function removeAnnotations(){
     for (i=annotations.length-1;i>=0;i--) {
@@ -150,15 +118,6 @@ function removeAnnotations(){
     }
     annotations = [];
 }
-/*
-var searching = function(e) {
-	regionLatitude = e.latitude;
-	regionLongitude = e.longitude;
-	Ti.API.info("latitude from regionChanged : " + regionLatitude);
-	Ti.API.info("longitude from regionChanged : "+ regionLongitude);
-	win2.setToolbar([flexSpace,searchButton,flexSpace]);
-};
-*/
 
 function gpsAnnotations(_coords){
 	removeAnnotations();

@@ -51,7 +51,7 @@ var stop;
 var incomingData;
 var longitude;
 var latitude;
-var streamPlayerurl = 'http://thematterofmemory.com/';
+var streamPlayerurl = 'http://thematterofmemory.com/thematterofmemory_scripts/';
 
 //	Activity Indicator
 var actInd = Titanium.UI.createActivityIndicator({ 
@@ -350,8 +350,7 @@ tableView.addEventListener('click', function(e){
 
 	//	Create Stream Player
 	try {
-	streamPlayer.url = streamPlayerurl + e.rowData.thisStream; /*3/27/2012 Issue with aggregating stream, it seems to be adding too much data; more than just simply the URL with the location to the .mp4*/
-	streamPlayer.start();
+	streamPlayer.url = streamPlayerurl + e.rowData.thisStream;
 	win4.add(headphones);
 
 	} catch (err) {

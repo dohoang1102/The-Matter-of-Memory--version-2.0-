@@ -1,11 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//	The followin2g script showcases the Map Google API and current position of the user.							  //
+//	The followin2g script showcases the Map Google API and current position of the user.						  //
 //	There is also a listener event that will change the way the map behaves in accordance to					  //
 //	the GPS location of the user by shifting the view to their location on "eventListener('location')"			  //
 //																												  //
 //	The PHP script will update the annotations on the map of the most up to date locations of other recordings.   //
 //																												  //
-//	Hector Leiva - 2012																							  //
+//	Hector Leiva - 2011 - 2012																					  //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 win2.backgroundColor = 'black';
 Ti.include('currentLocation.js');
@@ -103,7 +103,7 @@ movingLocation(gpsCallback);
 movingLocation(gpsAnnotations);
 
 function gpsCallback(_coords){
-	Ti.API.info(' testing : ' + _coords.latitude);
+	Ti.API.info('win2.js gpsCallback(_coords) function affecting mapView.setLocation({}); Latitude: ' + _coords.latitude + ' Longitude: ' + _coords.longitude);
 		mapView.setLocation({
 		latitude: _coords.latitude,
 		longitude: _coords.longitude,

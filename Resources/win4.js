@@ -25,8 +25,6 @@ var titleLabel = Titanium.UI.createLabel({
 win4.setTitleControl(titleLabel);
 
 movingLocation(gpsCallback);
-movingLocation(gpsAnnotations);
-
 
 //	Establishes the Table
 var tableData = [];
@@ -218,19 +216,9 @@ function reloadSend(){
 		win4.add(actInd);
 		actInd.show();
 	
-		//	Create a view that will block out all opitions while it loads
-/*
-		var view = Titanium.UI.createView({
-			backgroundColor:'black',
-			width: 320,
-			height: 460,
-			opacity: 0.9
-			});
-		win4.add(view);
-	*/
 		// Begin the "Get data" request
 		setTimeout(function(){
-			function gpsAnnotations(_coords){
+			function gpsCallback(_coords){
 			var xhr = Titanium.Network.createHTTPClient();
 			xhr.setTimeout(20000);
 			var geturl="http://thematterofmemory.com/thematterofmemory_scripts/memorycoordinates.php?latitude=" +  _coords.latitude + "&longitude=" + _coords.longitude;
@@ -244,14 +232,12 @@ function reloadSend(){
 		//	Remove all reloading indicators
 			actInd.message = null;
 			actInd.hide();
-			//win4.remove(view);
 			win4.setRightNavButton(reloadButton);
 			}; //end onerror
 ///////////////////////////////////////////////////////////////////
 			xhr.onload = function(){
 				actInd.message = null;
 				actInd.hide();
-				//win4.remove(view);
 				Titanium.API.info(this.responseText);
 				incomingData = JSON.parse(this.responseText);
 				displayItems(incomingData);
@@ -259,7 +245,7 @@ function reloadSend(){
 			xhr.send();
 			Titanium.API.info('Reload Button has been pressed!');
 			win4.setRightNavButton(reloadButton);
-			} //end of gpsAnnotations()
+			} //end of gpsCallback()
 		}, 1500); //Time out function will wait 1.5 seconds before executing a request to the server.
 	} catch(e) {
 			setTimeout(function(){
@@ -277,7 +263,7 @@ function reloadSend(){
 //	Get Moving Location - This fires within every 30 meters
 //
 
-	function gpsAnnotations(_coords){
+	function gpsCallback(_coords){
 	Ti.API.info('Latitude from MemoryPlayback : ' + _coords.latitude);
 	Ti.API.info('Longitude from MemoryPlayback : ' + _coords.longitude);
 	//	Clear the entire table view

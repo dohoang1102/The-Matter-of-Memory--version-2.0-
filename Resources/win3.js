@@ -1,6 +1,14 @@
-//
-//	Recording
-//
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//	This section of the code will do the following: 															   //
+//	Audio:  																									   //
+//	- Record an audio file with a ".mp4" extension																   //
+//	- Playback immediate file																					   //
+//	- Send audio file to a server that will interpert through a PHP script as where to save it on the server       //
+//	GPS: 																										   //
+//	- Log current GPS coordinates																				   //
+//	- Button press to send GPS coordinates																		   //
+//	Hector Leiva - 2011-2012																					   //
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 win3.backgroundColor = '#333';
 
 var titleLabel = Titanium.UI.createLabel({

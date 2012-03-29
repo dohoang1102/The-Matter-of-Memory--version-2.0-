@@ -125,15 +125,6 @@ function removeAnnotations(){
     annotations = [];
 }
 
-var detailWindow = Titanium.UI.createWindow({  
-  backButtonTitle: 'Back'
-});
-
-var detailView = Titanium.UI.createTableView({
-  style: Titanium.UI.iPhone.TableViewStyle.GROUPED
-});
-
-detailWindow.add(detailView);
 
 function gpsAnnotations(_coords){
 	removeAnnotations();
@@ -174,19 +165,22 @@ function gpsAnnotations(_coords){
 };
 
 //	This is needed for the error within Titanium Mobile that when removeing the 'regionChanged' event listener. It will freeze the map.
-mapView.addEventListener('singletap', function(){
-	searching();
-});
+//mapView.addEventListener('singletap', function(){
+//	searching();
+//});
 
 mapView.addEventListener('click', function(e) {
     if (e.clicksource == 'rightButton') {
     Ti.API.info('mapView was clicked');
-    Ti.UI.currentTab.open(detailWindow,{animated:true});
+ 
+	var detail_win2 = Titanium.UI.createWindow({
+			title:'Map View', backgroundColor:'#000000', barColor: '#999999'
+		});
+	tabGroup.activeTab.open(win,{animated:true})
     }
  });
 
 
 //searchButton.addEventListener('click', region_changing);
-
 win2.add(mapView);
 //win2.setToolbar([flexSpace,searchButton,flexSpace]);

@@ -49,6 +49,10 @@ var plotPoints;
 var updateAnnotations;
 var uploadGPS = '';
 var annotations = [];
+var myLabels = [];
+var title;
+var positionTop;
+var singleLabel;
 
 //	Activity Indicator
 var actInd = Titanium.UI.createActivityIndicator({ 
@@ -125,10 +129,24 @@ function removeAnnotations(){
     annotations = [];
 }
 
+var detail_win2 = Titanium.UI.createWindow({
+	title:'Map View', 
+	backgroundColor:'#fff', 
+	barColor: '#999999'
+});
+
+var easyTimelabel = Titanium.UI.createLabel({
+	text: 'nothing yet',
+	height:'auto',
+	width:'auto',
+	color:'#000',
+	font:{fontSize:16,fontFamily:"Helvetica Neue"},
+	bottom:160
+});
 
 function gpsAnnotations(_coords){
 	removeAnnotations();
-	var geturl="http://thematterofmemory.com/thematterofmemory_scripts/mappingcoordinates.php?latitude=" + _coords.latitude + "&longitude=" + _coords.longitude;
+	var geturl="http://thematterofmemory.com/thematterofmemory_scripts/memorymappingcoordinates.php?latitude=" + _coords.latitude + "&longitude=" + _coords.longitude;
 	Titanium.API.info('Region Changed: ' + geturl);
 	
 	var xhr = Titanium.Network.createHTTPClient();
@@ -144,6 +162,7 @@ function gpsAnnotations(_coords){
 	xhr.onload = function(){
 	Titanium.API.info('From win2.js & The Matter of Memory.com: ' + this.responseText);
 	incomingData = JSON.parse(this.responseText);
+	displayItems(incomingData);
 	for (var i = 0; i < incomingData.length; i++){
 	recorded = incomingData[i];
 		plotPoints = Titanium.Map.createAnnotation({
@@ -154,11 +173,24 @@ function gpsAnnotations(_coords){
 		rightButton: Titanium.UI.iPhone.SystemButton.DISCLOSURE,
 		animate:true
 		});
-		plotPoints.pincolor = Titanium.Map.ANNOTATION_GREEN;
-	
+	plotPoints.pincolor = Titanium.Map.ANNOTATION_GREEN;
 	mapView.addAnnotation(plotPoints);
 	annotations.push(plotPoints);
+
+    title = recorded.easytime;
+    positionTop = 50 * i;
+    singleLabel = Titanium.UI.createLabel({
+        text: title,
+        color:'#000',
+        top: positionTop,
+        width: 'auto'
+    });
+    
+
+    myLabels.push(singleLabel);
+    detail_win2.add(singleLabel);
 		}; // end of for loop
+
 	}; // end of xhr.onload()
 
 	xhr.send();
@@ -172,11 +204,10 @@ function gpsAnnotations(_coords){
 mapView.addEventListener('click', function(e) {
     if (e.clicksource == 'rightButton') {
     Ti.API.info('mapView was clicked');
- 
-	var detail_win2 = Titanium.UI.createWindow({
-			title:'Map View', backgroundColor:'#000000', barColor: '#999999'
-		});
-	tabGroup.activeTab.open(win,{animated:true})
+    Ti.API.info('These are the plotPoints ' + e.index);
+    Ti.API.info('My singleLabel ' + e.singleLabel);
+    Ti.API.info('My myLabels ' + e.myLabels);
+	tabGroup.activeTab.open(detail_win2,{animated:true})
     }
  });
 

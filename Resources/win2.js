@@ -53,6 +53,7 @@ var myLabels = [];
 var title;
 var positionTop;
 var singleLabel;
+var data = [];
 
 //	Activity Indicator
 var actInd = Titanium.UI.createActivityIndicator({ 
@@ -170,27 +171,20 @@ function gpsAnnotations(_coords){
 		longitude: recorded.Longitude,
 		title: 'Memory',
 		subtitle: 'Click to listen',
+		data: recorded.easytime,
 		rightButton: Titanium.UI.iPhone.SystemButton.DISCLOSURE,
 		animate:true
 		});
 	plotPoints.pincolor = Titanium.Map.ANNOTATION_GREEN;
 	mapView.addAnnotation(plotPoints);
 	annotations.push(plotPoints);
-
-    title = recorded.easytime;
-    positionTop = 50 * i;
-    singleLabel = Titanium.UI.createLabel({
-        text: title,
-        color:'#000',
-        top: positionTop,
-        width: 'auto'
-    });
-    
-
-    myLabels.push(singleLabel);
-    detail_win2.add(singleLabel);
 		}; // end of for loop
-
+   	singleLabel = Titanium.UI.createLabel({
+    text: title,
+    color:'#000',
+    top: positionTop,
+    width: 'auto'
+    });
 	}; // end of xhr.onload()
 
 	xhr.send();
@@ -204,9 +198,11 @@ function gpsAnnotations(_coords){
 mapView.addEventListener('click', function(e) {
     if (e.clicksource == 'rightButton') {
     Ti.API.info('mapView was clicked');
-    Ti.API.info('These are the plotPoints ' + e.index);
-    Ti.API.info('My singleLabel ' + e.singleLabel);
-    Ti.API.info('My myLabels ' + e.myLabels);
+
+	singleLabel.text = e.annotation.data;
+    
+    detail_win2.add(singleLabel);
+
 	tabGroup.activeTab.open(detail_win2,{animated:true})
     }
  });

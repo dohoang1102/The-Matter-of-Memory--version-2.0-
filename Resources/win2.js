@@ -171,7 +171,7 @@ function gpsAnnotations(_coords){
 		longitude: recorded.Longitude,
 		title: 'Memory',
 		subtitle: 'Click to listen',
-		data: recorded.easytime,
+		date: recorded.easytime,
 		rightButton: Titanium.UI.iPhone.SystemButton.DISCLOSURE,
 		animate:true
 		});
@@ -179,7 +179,7 @@ function gpsAnnotations(_coords){
 	mapView.addAnnotation(plotPoints);
 	annotations.push(plotPoints);
 		}; // end of for loop
-   	singleLabel = Titanium.UI.createLabel({
+   	dateLabel = Titanium.UI.createLabel({
     text: title,
     color:'#000',
     top: positionTop,
@@ -199,9 +199,9 @@ mapView.addEventListener('click', function(e) {
     if (e.clicksource == 'rightButton') {
     Ti.API.info('mapView was clicked');
 
-	singleLabel.text = e.annotation.data;
+	dateLabel.text = e.annotation.date;
     
-    detail_win2.add(singleLabel);
+    detail_win2.add(dateLabel);
 
 	tabGroup.activeTab.open(detail_win2,{animated:true})
     }

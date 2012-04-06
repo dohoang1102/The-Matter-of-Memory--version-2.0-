@@ -177,18 +177,27 @@ function gpsAnnotations(_coords){
 		}; // end of for loop
 		
 	//Ti.API.info('clock label: ' + recorded.easyclock);
+	
+	var positionLeft = 10;
 		
    	dateLabel = Titanium.UI.createLabel({
     text: title,
-    color:'#000',
-    width: 'auto'
+    color:'#333333',
+    height: 'auto',
+    font:{fontFamily:'Arial',fontSize:28,fontWeight:'bold'},
+    top: '5%',
+    left: positionLeft,
+    textAlign: 'TEXT_ALIGNMENT_LEFT'
     });
     
     clockLabel = Titanium.UI.createLabel({
     text: title,
-    color:'#000',
-    width: 'auto',
-    top: 60
+    color:'#333333',
+    height: 'auto',
+ 	font:{fontFamily:'Arial',fontSize:28,fontWeight:'bold'},
+    top: '25%',
+    left: positionLeft,
+    textAlign: 'TEXT_ALIGNMENT_LEFT'
     });
     
     audioURLLabel = Titanium.UI.createLabel({
@@ -216,10 +225,6 @@ mapView.addEventListener('click', function(e) {
 	dateLabel.text = e.annotation.date;
 	clockLabel.text = e.annotation.easyClock;
 	audioURL.text = e.annotation.audioURL;
-	
-	Ti.API.info('audioURL : ' + audioURL.text);
-	Ti.API.info('clockLabel : ' + clockLabel.text);
-	Ti.API.info('date : ' + dateLabel.text);
     
     //the window adds the date.
     detail_win2.add(audioURLLabel);

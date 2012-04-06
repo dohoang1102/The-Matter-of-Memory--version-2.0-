@@ -51,9 +51,9 @@ var uploadGPS = '';
 var annotations = [];
 var myLabels = [];
 var title;
-var positionTop;
-var singleLabel;
 var data = [];
+var easyClock = [];
+var audioURL = [];
 
 //	Activity Indicator
 var actInd = Titanium.UI.createActivityIndicator({ 
@@ -63,11 +63,14 @@ var actInd = Titanium.UI.createActivityIndicator({
 });
 
 // Button so user manually refreshes the map for memory locations
+/*
 var searchButton = Titanium.UI.createButtonBar({
 	labels:['Search this area for memory locations'],
 	backgroundColor:'#666',
 	width:250
 });
+*/
+
 var flexSpace = Titanium.UI.createButton({
 	systemButton:Titanium.UI.iPhone.SystemButton.FLEXIBLE_SPACE
 });
@@ -136,15 +139,6 @@ var detail_win2 = Titanium.UI.createWindow({
 	barColor: '#999999'
 });
 
-var easyTimelabel = Titanium.UI.createLabel({
-	text: 'nothing yet',
-	height:'auto',
-	width:'auto',
-	color:'#000',
-	font:{fontSize:16,fontFamily:"Helvetica Neue"},
-	bottom:160
-});
-
 function gpsAnnotations(_coords){
 	removeAnnotations();
 	var geturl="http://thematterofmemory.com/thematterofmemory_scripts/memorymappingcoordinates.php?latitude=" + _coords.latitude + "&longitude=" + _coords.longitude;
@@ -172,6 +166,8 @@ function gpsAnnotations(_coords){
 		title: 'Memory',
 		subtitle: 'Click to listen',
 		date: recorded.easytime,
+		easyClock: recorded.easyclock,
+		audioURL: recorded.AudioURL,
 		rightButton: Titanium.UI.iPhone.SystemButton.DISCLOSURE,
 		animate:true
 		});
@@ -179,12 +175,28 @@ function gpsAnnotations(_coords){
 	mapView.addAnnotation(plotPoints);
 	annotations.push(plotPoints);
 		}; // end of for loop
+		
+	//Ti.API.info('clock label: ' + recorded.easyclock);
+		
    	dateLabel = Titanium.UI.createLabel({
     text: title,
     color:'#000',
-    top: positionTop,
     width: 'auto'
     });
+    
+    clockLabel = Titanium.UI.createLabel({
+    text: title,
+    color:'#000',
+    width: 'auto',
+    top: 60
+    });
+    
+    audioURLLabel = Titanium.UI.createLabel({
+    text: title,
+    color:'#000',
+    width: 'auto'
+    });
+    
 	}; // end of xhr.onload()
 
 	xhr.send();
@@ -199,9 +211,20 @@ mapView.addEventListener('click', function(e) {
     if (e.clicksource == 'rightButton') {
     Ti.API.info('mapView was clicked');
 
+	//calls the 'date' array from when the annotations was being created and will substitute the 'text' field
+	//within the 'dateLabel'. It will be replaced everytime without overlap.
 	dateLabel.text = e.annotation.date;
+	clockLabel.text = e.annotation.easyClock;
+	audioURL.text = e.annotation.audioURL;
+	
+	Ti.API.info('audioURL : ' + audioURL.text);
+	Ti.API.info('clockLabel : ' + clockLabel.text);
+	Ti.API.info('date : ' + dateLabel.text);
     
+    //the window adds the date.
+    detail_win2.add(audioURLLabel);
     detail_win2.add(dateLabel);
+    detail_win2.add(clockLabel);
 
 	tabGroup.activeTab.open(detail_win2,{animated:true})
     }

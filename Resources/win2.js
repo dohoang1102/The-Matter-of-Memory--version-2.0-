@@ -25,6 +25,12 @@ Ti.App.addEventListener('current.position', function(coords){
 	var currentLongitude = JSON.stringify(coords.longitude);
 });
 
+var detail_win2 = Titanium.UI.createWindow({
+	title:'Map View', 
+	backgroundColor:'#fff', 
+	barColor: '#999999'
+});
+
 //	create the label - Introduction
 var titleLabel = Titanium.UI.createLabel({
     color:'#333333',
@@ -54,7 +60,8 @@ var title;
 var data = [];
 var easyClock = [];
 var audioURL = [];
-
+var streamPlayerurl = 'http://thematterofmemory.com/thematterofmemory_scripts/';
+var url = "http://thematterofmemory.com";
 //	Activity Indicator
 var actInd = Titanium.UI.createActivityIndicator({ 
 	height:50,
@@ -71,9 +78,83 @@ var searchButton = Titanium.UI.createButtonBar({
 });
 */
 
+// Create audio streaming player
+// load from remote url
+var sound = Titanium.Media.createAudioPlayer({
+	url: url,
+	allowBackground: true,
+	preload:false
+});
+
+//
+//	BUTTONS FOR STREAMING
+//
+
+//
+//	PLAY
+//
+var play = Titanium.UI.createButton({
+	title:'Play',
+	height:40,
+	width:145,
+	left:10,
+	top:10
+});
+play.addEventListener('click', function()
+{
+	sound.start(); //sound.play();
+});
+
+//
+//	PAUSE
+//
+var pause = Titanium.UI.createButton({
+	title:'Pause',
+	height:40,
+	width:145,
+	right:10,
+	top:10
+});
+pause.addEventListener('click', function()
+{
+	sound.pause();
+});
+
+//
+//	STOP
+//
+var stop = Titanium.UI.createButton({
+	title:'Stop',
+	height:40,
+	width:145,
+	right:10,
+	top:60
+});
+stop.addEventListener('click', function()
+{
+	sound.stop();
+});
+
+//
+//	SOUND EVENTS
+//
+sound.addEventListener('complete', function()
+{
+	Titanium.API.info('COMPLETE CALLED');
+});
+sound.addEventListener('resume', function()
+{
+	Titanium.API.info('RESUME CALLED');
+});
+
+//
+//  PROGRESS BAR TO TRACK SOUND DURATION
+//
 var flexSpace = Titanium.UI.createButton({
 	systemButton:Titanium.UI.iPhone.SystemButton.FLEXIBLE_SPACE
 });
+
+detail_win2.setToolbar([flexSpace]);
 
 //	Alerts
 var lostSignal = Ti.UI.createAlertDialog({
@@ -133,12 +214,6 @@ function removeAnnotations(){
     annotations = [];
 }
 
-var detail_win2 = Titanium.UI.createWindow({
-	title:'Map View', 
-	backgroundColor:'#fff', 
-	barColor: '#999999'
-});
-
 function gpsAnnotations(_coords){
 	removeAnnotations();
 	var geturl="http://thematterofmemory.com/thematterofmemory_scripts/memorymappingcoordinates.php?latitude=" + _coords.latitude + "&longitude=" + _coords.longitude;
@@ -195,15 +270,9 @@ function gpsAnnotations(_coords){
     color:'#333333',
     height: 'auto',
  	font:{fontFamily:'Arial',fontSize:28,fontWeight:'bold'},
-    top: '25%',
+    top: '27%',
     left: positionLeft,
     textAlign: 'TEXT_ALIGNMENT_LEFT'
-    });
-    
-    audioURLLabel = Titanium.UI.createLabel({
-    text: title,
-    color:'#000',
-    width: 'auto'
     });
     
 	}; // end of xhr.onload()
@@ -224,17 +293,26 @@ mapView.addEventListener('click', function(e) {
 	//within the 'dateLabel'. It will be replaced everytime without overlap.
 	dateLabel.text = e.annotation.date;
 	clockLabel.text = e.annotation.easyClock;
-	audioURL.text = e.annotation.audioURL;
+	Ti.API.info('This is under mapView : ' + streamPlayerurl + e.annotation.audioURL);
+	//	Create Stream Player
+	sound.url = streamPlayerurl + e.annotation.audioURL;
     
     //the window adds the date.
-    detail_win2.add(audioURLLabel);
     detail_win2.add(dateLabel);
     detail_win2.add(clockLabel);
+    
+    detail_win2.add(play);
+    detail_win2.add(stop);
+    detail_win2.add(pause);
 
 	tabGroup.activeTab.open(detail_win2,{animated:true})
     }
  });
 
+detail_win2.addEventListener('close', function()
+{
+	Ti.API.info('detail_win2 has closed.');
+});
 
 //searchButton.addEventListener('click', region_changing);
 win2.add(mapView);

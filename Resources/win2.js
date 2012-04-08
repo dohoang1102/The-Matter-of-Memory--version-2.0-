@@ -93,14 +93,12 @@ var sound = Titanium.Media.createAudioPlayer({
 //
 //	PLAY
 //
-var play = Titanium.UI.createButton({
-	title:'Play',
-	height:40,
-	width:145,
-	left:10,
-	top:10
-});
-play.addEventListener('click', function()
+var playButton = Titanium.UI.createButton({
+	systemButton:Titanium.UI.iPhone.SystemButton.PLAY,
+	left:30,
+	enabled:true
+	});
+playButton.addEventListener('click', function()
 {
 	sound.start(); //sound.play();
 });
@@ -108,31 +106,30 @@ play.addEventListener('click', function()
 //
 //	PAUSE
 //
-var pause = Titanium.UI.createButton({
-	title:'Pause',
-	height:40,
-	width:145,
-	right:10,
-	top:10
+var pauseButton = Titanium.UI.createButton({
+	systemButton:Titanium.UI.iPhone.SystemButton.PAUSE,
+	enabled:true
 });
-pause.addEventListener('click', function()
+pauseButton.addEventListener('click', function()
 {
 	sound.pause();
 });
 
 //
-//	STOP
+//	REWIND
 //
-var stop = Titanium.UI.createButton({
-	title:'Stop',
-	height:40,
-	width:145,
-	right:10,
-	top:60
+var rewindButton = Titanium.UI.createButton({
+	systemButton:Titanium.UI.iPhone.SystemButton.REWIND,
+	left:50,
+	enabled:true
 });
-stop.addEventListener('click', function()
+rewindButton.addEventListener('click', function()
 {
 	sound.stop();
+});
+
+var flexSpace = Titanium.UI.createButton({
+	systemButton:Titanium.UI.iPhone.SystemButton.FLEXIBLE_SPACE
 });
 
 //
@@ -146,15 +143,6 @@ sound.addEventListener('resume', function()
 {
 	Titanium.API.info('RESUME CALLED');
 });
-
-//
-//  PROGRESS BAR TO TRACK SOUND DURATION
-//
-var flexSpace = Titanium.UI.createButton({
-	systemButton:Titanium.UI.iPhone.SystemButton.FLEXIBLE_SPACE
-});
-
-detail_win2.setToolbar([flexSpace]);
 
 //	Alerts
 var lostSignal = Ti.UI.createAlertDialog({
@@ -301,9 +289,7 @@ mapView.addEventListener('click', function(e) {
     detail_win2.add(dateLabel);
     detail_win2.add(clockLabel);
     
-    detail_win2.add(play);
-    detail_win2.add(stop);
-    detail_win2.add(pause);
+    detail_win2.setToolbar([playButton,flexSpace,pauseButton,flexSpace,rewindButton], {translucent:true});
 
 	tabGroup.activeTab.open(detail_win2,{animated:true})
     }
@@ -311,9 +297,24 @@ mapView.addEventListener('click', function(e) {
 
 detail_win2.addEventListener('close', function()
 {
+	detail_win2.remove(dateLabel);
+	detail_win2.remove(clockLabel);
+	sound.stop();
 	Ti.API.info('detail_win2 has closed.');
 });
 
 //searchButton.addEventListener('click', region_changing);
 win2.add(mapView);
 //win2.setToolbar([flexSpace,searchButton,flexSpace]);
+
+Ti.App.addEventListener('pause', function(e) {
+    // app is paused during phone call, so pause the stream
+    sound.setPaused(true);
+    // you could also use streamer.pause()
+});
+
+Ti.App.addEventListener('resume', function(e) {
+    // app resumes when call ends, so un-pause the stream
+    sound.setPaused(false);
+    // or use streamer.start()
+});

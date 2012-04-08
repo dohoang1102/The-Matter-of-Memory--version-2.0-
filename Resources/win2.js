@@ -101,6 +101,7 @@ var playButton = Titanium.UI.createButton({
 playButton.addEventListener('click', function()
 {
 	sound.start(); //sound.play();
+
 });
 
 //
@@ -281,7 +282,7 @@ mapView.addEventListener('click', function(e) {
 	//within the 'dateLabel'. It will be replaced everytime without overlap.
 	dateLabel.text = e.annotation.date;
 	clockLabel.text = e.annotation.easyClock;
-	Ti.API.info('This is under mapView : ' + streamPlayerurl + e.annotation.audioURL);
+
 	//	Create Stream Player
 	sound.url = streamPlayerurl + e.annotation.audioURL;
     
@@ -294,6 +295,12 @@ mapView.addEventListener('click', function(e) {
 	tabGroup.activeTab.open(detail_win2,{animated:true})
     }
  });
+ 
+ if (sound.getWaiting() == true) {
+		Ti.API.info('Buffer is waiting.');
+	} else {
+		Ti.API.info('It should be playing.');
+	}
 
 detail_win2.addEventListener('close', function()
 {
@@ -301,6 +308,22 @@ detail_win2.addEventListener('close', function()
 	detail_win2.remove(clockLabel);
 	sound.stop();
 	Ti.API.info('detail_win2 has closed.');
+});
+
+sound.addEventListener('change',function(e)
+{
+    Ti.API.info('State: ' + e.description + ' (' + e.state + ')');
+    if (e.description == 'waiting_for_data'){
+    	//
+    	//	Insert actions when the stream is loading
+    	//
+    	Ti.API.info('Waiting for data.');
+    } else if (e.description == 'playing'){
+    	//
+    	//	Insert actions when the stream is playing
+    	//
+    	Ti.API.info('Playing!');
+    }
 });
 
 //searchButton.addEventListener('click', region_changing);

@@ -27,7 +27,7 @@ Ti.App.addEventListener('current.position', function(coords){
 
 var detail_win2 = Titanium.UI.createWindow({
 	title:'Map View', 
-	backgroundColor:'#fff', 
+	backgroundColor:'#999', 
 	barColor: '#999999'
 });
 
@@ -246,20 +246,21 @@ function gpsAnnotations(_coords){
 		
    	dateLabel = Titanium.UI.createLabel({
     text: title,
-    color:'#333333',
+    color:'#ffffff',
     height: 'auto',
-    font:{fontFamily:'Arial',fontSize:28,fontWeight:'bold'},
-    top: '5%',
+    width: 'auto',
+    font:{fontFamily:'Arial',fontSize:20,fontWeight:'bold'},
+    top: '30%',
     left: positionLeft,
     textAlign: 'TEXT_ALIGNMENT_LEFT'
     });
     
     clockLabel = Titanium.UI.createLabel({
     text: title,
-    color:'#333333',
+    color:'#ffffff',
     height: 'auto',
- 	font:{fontFamily:'Arial',fontSize:28,fontWeight:'bold'},
-    top: '27%',
+ 	font:{fontFamily:'Arial',fontSize:26,fontWeight:'bold'},
+    top: '35%',
     left: positionLeft,
     textAlign: 'TEXT_ALIGNMENT_LEFT'
     });

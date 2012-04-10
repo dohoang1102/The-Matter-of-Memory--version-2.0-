@@ -60,6 +60,8 @@ var title;
 var data = [];
 var easyClock = [];
 var audioURL = [];
+var miniMapLatitude = [];
+var miniMapLongitude = [];
 var streamPlayerurl = 'http://thematterofmemory.com/thematterofmemory_scripts/';
 var url = "http://thematterofmemory.com";
 //	Activity Indicator
@@ -227,6 +229,8 @@ function gpsAnnotations(_coords){
 		plotPoints = Titanium.Map.createAnnotation({
 		latitude: recorded.Latitude,
 		longitude: recorded.Longitude,
+		miniMapLatitude: recorded.Latitude,
+		miniMapLongitude: recorded.Longitude,
 		title: 'Memory',
 		subtitle: 'Click to listen',
 		date: recorded.easytime,
@@ -250,7 +254,7 @@ function gpsAnnotations(_coords){
     height: 'auto',
     width: 'auto',
     font:{fontFamily:'Arial',fontSize:20,fontWeight:'bold'},
-    top: '30%',
+    top: '5%',
     left: positionLeft,
     textAlign: 'TEXT_ALIGNMENT_LEFT'
     });
@@ -260,7 +264,7 @@ function gpsAnnotations(_coords){
     color:'#ffffff',
     height: 'auto',
  	font:{fontFamily:'Arial',fontSize:26,fontWeight:'bold'},
-    top: '35%',
+    top: '12%',
     left: positionLeft,
     textAlign: 'TEXT_ALIGNMENT_LEFT'
     });
@@ -293,15 +297,32 @@ mapView.addEventListener('click', function(e) {
     
     detail_win2.setToolbar([playButton,flexSpace,pauseButton,flexSpace,rewindButton], {translucent:true});
 
+	var miniPlotPoints = Titanium.Map.createAnnotation({
+	latitude: e.annotation.latitude,
+	longitude: e.annotation.longitude,
+	title: 'Memory',
+	animate:true
+	});
+	
+	miniPlotPoints.pincolor = Titanium.Map.ANNOTATION_GREEN;
+
+	var mapMiniView = Ti.Map.createView({
+	bottom: '13%',
+	height: '50%',
+	width: '98%',
+	userLocation: false,
+	mapType: Ti.Map.STANDARD_TYPE,
+	animate: false,
+	regionFit: true,
+	region: {latitude: e.annotation.miniMapLatitude, longitude: e.annotation.miniMapLongitude, latitudeDelta: 0.0001, longitudeDelta: 0.0001}, 
+	});
+	
+	mapMiniView.addAnnotation(miniPlotPoints);
+	detail_win2.add(mapMiniView);
+
 	tabGroup.activeTab.open(detail_win2,{animated:true})
     }
  });
- 
- if (sound.getWaiting() == true) {
-		Ti.API.info('Buffer is waiting.');
-	} else {
-		Ti.API.info('It should be playing.');
-	}
 
 detail_win2.addEventListener('close', function()
 {

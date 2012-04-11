@@ -64,12 +64,23 @@ var miniMapLatitude = [];
 var miniMapLongitude = [];
 var streamPlayerurl = 'http://thematterofmemory.com/thematterofmemory_scripts/';
 var url = "http://thematterofmemory.com";
+
 //	Activity Indicator
-var actInd = Titanium.UI.createActivityIndicator({ 
-	height:50,
-	width:10,
+var activityIndicator = Titanium.UI.createActivityIndicator({ 
+	color: 'white',
+	height:"auto",
+	width:"auto",
+	message: "Now loading...",
 	style:Titanium.UI.iPhone.ActivityIndicatorStyle.PLAIN
 });
+
+var activityBlackView = Ti.UI.createView({
+	color: 'black',
+	height: "auto",
+	width: "auto"
+});
+
+detail_win2.add(activityIndicator);
 
 // Button so user manually refreshes the map for memory locations
 /*
@@ -263,8 +274,8 @@ function gpsAnnotations(_coords){
     text: title,
     color:'#ffffff',
     height: 'auto',
- 	font:{fontFamily:'Arial',fontSize:26,fontWeight:'bold'},
-    top: '12%',
+ 	font:{fontFamily:'Arial',fontSize:'25%',fontWeight:'bold'},
+    top: '17%',
     left: positionLeft,
     textAlign: 'TEXT_ALIGNMENT_LEFT'
     });
@@ -314,7 +325,9 @@ mapView.addEventListener('click', function(e) {
 	mapType: Ti.Map.STANDARD_TYPE,
 	animate: false,
 	regionFit: true,
-	region: {latitude: e.annotation.miniMapLatitude, longitude: e.annotation.miniMapLongitude, latitudeDelta: 0.0001, longitudeDelta: 0.0001}, 
+	borderColor: 'black',
+	borderWidth: 3,
+	region: {latitude: e.annotation.miniMapLatitude, longitude: e.annotation.miniMapLongitude, latitudeDelta: 0.0001, longitudeDelta: 0.0001}
 	});
 	
 	mapMiniView.addAnnotation(miniPlotPoints);
@@ -322,7 +335,7 @@ mapView.addEventListener('click', function(e) {
 
 	tabGroup.activeTab.open(detail_win2,{animated:true})
     }
- });
+});
 
 detail_win2.addEventListener('close', function()
 {
@@ -336,20 +349,16 @@ sound.addEventListener('change',function(e)
 {
     Ti.API.info('State: ' + e.description + ' (' + e.state + ')');
     if (e.description == 'waiting_for_data'){
-    	//
-    	//	Insert actions when the stream is loading
-    	//
+		activityIndicator.show();
     	Ti.API.info('Waiting for data.');
-    } else if (e.description == 'playing'){
-    	//
-    	//	Insert actions when the stream is playing
-    	//
-    	Ti.API.info('Playing!');
+    } else {
+    	activityIndicator.hide();
     }
 });
 
 //searchButton.addEventListener('click', region_changing);
 win2.add(mapView);
+win2.add(activityIndicator);
 //win2.setToolbar([flexSpace,searchButton,flexSpace]);
 
 Ti.App.addEventListener('pause', function(e) {

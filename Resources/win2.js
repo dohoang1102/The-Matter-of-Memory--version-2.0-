@@ -65,23 +65,6 @@ var miniMapLongitude = [];
 var streamPlayerurl = 'http://thematterofmemory.com/thematterofmemory_scripts/';
 var url = "http://thematterofmemory.com";
 
-//	Activity Indicator
-var activityIndicator = Titanium.UI.createActivityIndicator({ 
-	color: 'white',
-	height:"auto",
-	width:"auto",
-	message: "Now loading...",
-	style:Titanium.UI.iPhone.ActivityIndicatorStyle.PLAIN
-});
-
-var activityBlackView = Ti.UI.createView({
-	color: 'black',
-	height: "auto",
-	width: "auto"
-});
-
-detail_win2.add(activityIndicator);
-
 // Button so user manually refreshes the map for memory locations
 /*
 var searchButton = Titanium.UI.createButtonBar({
@@ -345,20 +328,33 @@ detail_win2.addEventListener('close', function()
 	Ti.API.info('detail_win2 has closed.');
 });
 
+    	var view = Titanium.UI.createView({
+		backgroundColor:'black',
+		width: '100%',
+		height: '100%',
+		opacity: 0.9,
+		iseeyou: false
+		});
+		
 sound.addEventListener('change',function(e)
 {
     Ti.API.info('State: ' + e.description + ' (' + e.state + ')');
-    if (e.description == 'waiting_for_data'){
-		activityIndicator.show();
+    if (e.description == 'waiting_for_data' || e.description == 'waiting_for_queue'){
+    	//	Activity Indicator
+		var actInd = Titanium.UI.createActivityIndicator({ height:50, width:10 }); 
+		detail_win2.add(actInd);
+
+		detail_win2.add(view);
+		view.iseeyou = true;
     	Ti.API.info('Waiting for data.');
-    } else {
-    	activityIndicator.hide();
+    } else if (view.iseeyou == true){
+    	detail_win2.remove(view);
+    	view.iseeyou = false;
     }
 });
 
 //searchButton.addEventListener('click', region_changing);
 win2.add(mapView);
-win2.add(activityIndicator);
 //win2.setToolbar([flexSpace,searchButton,flexSpace]);
 
 Ti.App.addEventListener('pause', function(e) {

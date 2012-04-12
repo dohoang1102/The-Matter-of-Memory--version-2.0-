@@ -10,20 +10,23 @@
 win2.backgroundColor = 'black';
 Ti.include('currentLocation.js');
 
+var currentLatitude;
+var currentLongitude;
+
 // Global Listener
 Ti.App.addEventListener('location.updated', function(coords){
 	Ti.API.debug(JSON.stringify(coords));
 	Ti.API.info('from Global eventlistener :' + JSON.stringify(coords.longitude));
-	var latitude = JSON.stringify(coords.latitude);
-	var longitude = JSON.stringify(coords.longitude);
+	currentLatitude = JSON.stringify(coords.latitude);
+	currentLongitude = JSON.stringify(coords.longitude);
 });
 
-Ti.App.addEventListener('current.position', function(coords){
+/*Ti.App.addEventListener('current.position', function(coords){
 	Ti.API.info('from Global eventlistener & current position longitude: ' + JSON.stringify(coords.longitude));
 	Ti.API.info('from Global eventListener & current position latitude : ' + JSON.stringify(coords.latitude));
-	var currentLatitude = JSON.stringify(coords.latitude);
-	var currentLongitude = JSON.stringify(coords.longitude);
-});
+	currentLatitude = JSON.stringify(coords.latitude);
+	currentLongitude = JSON.stringify(coords.longitude);
+});*/
 
 var detail_win2 = Titanium.UI.createWindow({
 	title:'Map View', 
@@ -62,6 +65,15 @@ var actInd = Titanium.UI.createActivityIndicator({
 	font: {fontFamily:'Helvetica Neue', fontSize:18, fontWeight:'bold'},
 	message: 'Loading...',
 	style:Ti.UI.iPhone.ActivityIndicatorStyle.BIG
+});
+
+//	Start by creating the Map with these current coordinates.
+var mapView = Titanium.Map.createView({
+	mapType: Titanium.Map.STANDARD_TYPE,
+    animate:true,
+    regionFit:true,
+    userLocation:true,
+    region: {latitude: currentLatitude, longitude: currentLongitude, latitudeDelta: 0.1, longitudeDelta: 0.1}
 });
 
 //
@@ -171,14 +183,6 @@ var lostServer = Ti.UI.createAlertDialog({
 		title:'Timed Out',
 		message:'There was an issue connecting to the server, please wait and try again.'
 		});
-		
-//	Start by creating the Map with these current coordinates.
-var mapView = Titanium.Map.createView({
-    mapType: Titanium.Map.STANDARD_TYPE,
-    animate:true,
-    regionFit:false,
-    userLocation:true,
-});
 
 // Create an event where once the map loads or if the region changes, to bring up a search button that will look on the map for near-by annotations. To
 // load it from just the map loading would cause too many calls if you are zoomed in - maybe overloading the amount of requests.
@@ -204,11 +208,13 @@ movingLocation(gpsAnnotations);
 // To center the map whenever there is movement from the user. Helpful if the user is travelling at higher speeds, will continue to the center the map.
 function gpsCallback(_coords){
 	Ti.API.info('win2.js gpsCallback(_coords) function affecting mapView.setLocation({}); Latitude: ' + _coords.latitude + ' Longitude: ' + _coords.longitude);
-		mapView.setLocation({
+		
+		/*mapView.setLocation({
 		latitude: _coords.latitude,
 		longitude: _coords.longitude,
-		animate: true
-	});
+		animate: true,
+		regionFit: true
+	});*/
 }
 
 //	This function will run though the 'annotations' array() and remove them from the mapView. Then will set them to an empty array.
@@ -329,7 +335,7 @@ mapView.addEventListener('click', function(e) {
 	animate: false,
 	regionFit: true,
 	borderColor: 'black',
-	borderWidth: 3,
+	borderWidth: 4,
 	region: {latitude: e.annotation.miniMapLatitude, longitude: e.annotation.miniMapLongitude, latitudeDelta: 0.0001, longitudeDelta: 0.0001}
 	});
 	
@@ -337,6 +343,7 @@ mapView.addEventListener('click', function(e) {
 	detail_win2.add(mapMiniView);
 
 	tabGroup.activeTab.open(detail_win2,{animated:true})
+	sound.start();
     }
 });
 

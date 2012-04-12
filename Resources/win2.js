@@ -52,6 +52,18 @@ var view = Titanium.UI.createView({
 	iseeyou: false
 });
 
+//	Activity Indicator
+var actInd = Titanium.UI.createActivityIndicator({
+	top: 20,
+	left: 50,
+	color: 'white',
+	height:'auto', 
+	width:'auto',
+	font: {fontFamily:'Helvetica Neue', fontSize:18, fontWeight:'bold'},
+	message: 'Loading...',
+	style:Ti.UI.iPhone.ActivityIndicatorStyle.BIG
+});
+
 //
 //	Globally Declared Variables
 //
@@ -335,9 +347,6 @@ detail_win2.addEventListener('close', function()
 	sound.stop();
 	Ti.API.info('detail_win2 has closed.');
 });
-    	//	Activity Indicator
-		var actInd = Titanium.UI.createActivityIndicator({ height:'auto', width:'auto' , style:Ti.UI.iPhone.ActivityIndicatorStyle.PLAIN,}); 
-
 		
 sound.addEventListener('change',function(e)
 {

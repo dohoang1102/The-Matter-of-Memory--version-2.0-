@@ -15,8 +15,8 @@ var currentLongitude;
 
 // Global Listener
 Ti.App.addEventListener('location.updated', function(coords){
-	Ti.API.debug(JSON.stringify(coords));
-	Ti.API.info('from Global eventlistener :' + JSON.stringify(coords.longitude));
+	//Ti.API.debug(JSON.stringify(coords));
+	Ti.API.info('from Global eventlistener - Longitude : ' + JSON.stringify(coords.longitude) + ' Latitude : ' + JSON.stringify(coords.latitude));
 	currentLatitude = JSON.stringify(coords.latitude);
 	currentLongitude = JSON.stringify(coords.longitude);
 });
@@ -185,12 +185,12 @@ var lostServer = Ti.UI.createAlertDialog({
 // Create an event where once the map loads or if the region changes, to bring up a search button that will look on the map for near-by annotations. To
 // load it from just the map loading would cause too many calls if you are zoomed in - maybe overloading the amount of requests.
 mapView.addEventListener('complete', function(e){
-	Ti.API.info('mapView completed.');
+	//Ti.API.info('mapView completed.');
 });
 
 mapView.addEventListener('error', function(e) {
-	Ti.API.info('error');
-	Ti.API.info(e);
+	//Ti.API.info('error');
+	//Ti.API.info(e);
 });
 
 /*	Getting a location now is in its own file and it is called by using a function onto the page. 
@@ -239,7 +239,7 @@ function gpsAnnotations(_coords){
 	//	For each latitude and longitude value that is returned from the server, they will be a latitude and longitude value to set for the annotations.	 //
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	xhr.onload = function(){
-	Titanium.API.info('From win2.js & The Matter of Memory.com: ' + this.responseText);
+	//Titanium.API.info('From win2.js & The Matter of Memory.com: ' + this.responseText);
 	incomingData = JSON.parse(this.responseText);
 	displayItems(incomingData);
 	for (var i = 0; i < incomingData.length; i++){
@@ -299,7 +299,6 @@ function gpsAnnotations(_coords){
 
 mapView.addEventListener('click', function(e) {
     if (e.clicksource == 'rightButton') {
-    Ti.API.info('mapView was clicked');
 
 	//calls the 'date' array from when the annotations was being created and will substitute the 'text' field
 	//within the 'dateLabel'. It will be replaced everytime without overlap.

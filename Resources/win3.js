@@ -240,10 +240,10 @@ var postData = {
 movingLocation(gpsCallback);
 
 function gpsCallback(_coords){
-	Ti.API.info(' testing : ' + _coords.latitude);
+	Ti.API.info(' Recording Window : Latitide : ' + _coords.latitude + ' Longitude : ' + _coords.longitude);
 	var datatoWrite = {
-	"latitude":latitude,
-	"longitude":longitude
+	"latitude": _coords.latitude,
+	"longitude": _coords.longitude
 	};
 	
 	//Data to write?
@@ -261,7 +261,8 @@ function gpsCallback(_coords){
 //	Button - Ready to Record
 //
 
-var start = Titanium.UI.createButton({	
+var record = Titanium.UI.createButton({
+	title:'Record',	
 	backgroundColor:"#990000",
 	borderRadius: 7,
 	borderWidth: 1,
@@ -271,10 +272,10 @@ var start = Titanium.UI.createButton({
 	width:190,
 	left:30,
 	top:30, // top:60
-	title:'Record',
-	color:"#fff"
+	color:"#fff",
+	enabled: true
 });
-win3.add(start);
+win3.add(record);
 
 //
 //	Label Title - Ready to Record
@@ -325,6 +326,7 @@ var describeTextModal = Titanium.UI.createLabel({
 //
 
 var playback = Titanium.UI.createButton({
+	title:"Playback Recording",
 	backgroundColor:"#00cc33",
 	borderRadius: 7,
 	borderWidth: 1,
@@ -334,9 +336,8 @@ var playback = Titanium.UI.createButton({
 	width:220,
 	top:140,
 	left:30,
-	title:"Playback Recording",
 	color:"fff",
-	opacity: 0.2
+	enabled: true
 });
 
 win3.add(playback);
@@ -361,6 +362,7 @@ win3.add(playbackText);
 //
 
 var upload = Titanium.UI.createButton({
+	title:"Submit Memory",
 	backgroundColor:"#0066cc",
 	borderRadius: 7,
 	borderWidth: 1,
@@ -370,9 +372,8 @@ var upload = Titanium.UI.createButton({
 	width:200,
 	top:250,
 	left:30,
-	title:"Submit Memory",
 	color:"#fff",
-	opacity: 0.2
+	enabled: true
 });
 
 win3.add(upload);
@@ -427,20 +428,23 @@ function stopRecording(){
 //
 //	Button - Ready to Record - Event!
 //
-start.addEventListener('click', function(){
+record.addEventListener('click', function(){
 	if (!Ti.Media.canRecord) {
-	Ti.UI.createAlertDialog({
-	title:'Error!',
-	message:'No audio recording hardware is currently connected.'
-	}).show();
+		Ti.UI.createAlertDialog({
+		title:'Error!',
+		message:'No audio recording hardware is currently connected.'
+		}).show();
 	};
-	
+//	
+//	An across the board event. When there is sound playing, the record button will be disabled.
+//
 	if (sound && sound.playing){
+		record.enabled = false;
 		Titanium.UI.createAlertDialog({title:'Preview', message:'You are previewing and can not record at this time.'}).show();
 		return;
 	} else {
-		
-
+	
+	// Once you've hit the record button, the modal window will come up with all of these options.	
 	var done = Titanium.UI.createButton({
 		systemButton:Titanium.UI.iPhone.SystemButton.DONE
 	});
@@ -481,30 +485,35 @@ if (file == null)
 		}).show();
 		return;
 	} else {
+//
+//	An across the board event. When there is sound playing, the play button takes 800ms to reset the sound and revert the playback title.
+//
 		if (sound && sound.playing)
 		{
 			setTimeout(function(){
-			//tabGroup.animate({bottom:0,duration:500});
 			sound.stop();
 			sound.release();
 			sound = null;
-			playbackLabel.text = 'Playback Recording';
-		},800);
+			playback.title = 'Playback Recording';
+			},800);
 		} else {
+			play.enabled = true;
 			Ti.API.info("recording file size: "+file.size);
 			sound = Titanium.Media.createSound({sound:file});
 			sound.addEventListener('complete', function()
 				{
 				setTimeout(function(){
-				//tabGroup.animate({bottom:0,duration:500});
 				playback.title = 'Playback Recording';
-			},800);
+				},800);
 				});
+//
+//	An across the board event. When the phone is recording, the playback button will be disabled. But since a modal comes up, you can not access
+//
 			if(recording.recording){
-				Titanium.UI.createAlertDialog({title:'One Moment', message:'You need to complete the recording before previewing.'}).show();
+				play.enabled = false;
+				//Titanium.UI.createAlertDialog({title:'One Moment', message:'You need to complete the recording before previewing.'}).show();
 			} else {
 			setTimeout(function(){
-			//tabGroup.animate({bottom:-50, duration:500});
 			sound.play();
 			playback.title = 'Stop Playback';
 		},800);

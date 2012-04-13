@@ -98,7 +98,7 @@ var countDown =  function( m , s, fn_tick, fn_end  ) {
 	}
 }
 
-var my_timer = new countDown(2,00, 
+var my_timer = new countDown(2,01, 
 		function() {
 			display_lbl.text = my_timer.time.m+" : "+my_timer.time.s;
 		},
@@ -110,7 +110,7 @@ var my_timer = new countDown(2,00,
 	);
 
 var display_lbl =  Titanium.UI.createLabel({
-	text:"2 : 00",
+	text:"2 : 01",
 	height:80,
 	width:320,
 	top:100,
@@ -124,7 +124,7 @@ var display_lbl =  Titanium.UI.createLabel({
 	},
 	textAlign:'center'
 });
-	my_timer.set(2,00);
+	my_timer.set(2,01);
 	
 
 // default compression is Ti.Media.AUDIO_FORMAT_LINEAR_PCM
@@ -327,7 +327,7 @@ var describeTextModal = Titanium.UI.createLabel({
 
 var playback = Titanium.UI.createButton({
 	title:"Playback Recording",
-	backgroundColor:"#00cc33",
+	backgroundColor:"#009900",
 	borderRadius: 7,
 	borderWidth: 1,
 	borderColor: "#fff",
@@ -452,7 +452,7 @@ record.addEventListener('click', function(){
 	modal.add(describeTextModal);
 	modal.add(timeLimitModal);
 	
-	my_timer.set(2,00);
+	my_timer.set(2,01);
 	my_timer.start();
 	recording.start();
 	Ti.Media.startMicrophoneMonitor();

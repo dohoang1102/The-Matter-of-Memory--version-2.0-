@@ -57,14 +57,12 @@ var view = Titanium.UI.createView({
 
 //	Activity Indicator
 var actInd = Titanium.UI.createActivityIndicator({
-	top: 20,
-	left: 50,
 	color: 'white',
-	height:'auto', 
-	width:'auto',
 	font: {fontFamily:'Helvetica Neue', fontSize:18, fontWeight:'bold'},
 	message: 'Loading...',
-	style:Ti.UI.iPhone.ActivityIndicatorStyle.BIG
+	style:Ti.UI.iPhone.ActivityIndicatorStyle.PLAIN,
+	height:'auto', 
+	width:'auto'
 });
 
 //	Start by creating the Map with these current coordinates.

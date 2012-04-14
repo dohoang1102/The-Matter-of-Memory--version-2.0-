@@ -44,23 +44,31 @@ var titleLabel = Titanium.UI.createLabel({
 });
 win2.setTitleControl(titleLabel);
 
+//	Activity Indicator
+var activityIndicator = Ti.UI.createActivityIndicator({
+  color: 'white',
+  font: {fontFamily:'Helvetica Neue', fontSize:20, fontWeight:'normal'},
+  message: 'Loading...',
+  style:Ti.UI.iPhone.ActivityIndicatorStyle.DARK,
+  top:'auto',
+  left:'auto',
+  height:'auto',
+  width:'auto'
+});
+
+detail_win2.add(activityIndicator);
+activityIndicator.zIndex = 9;
+
 var view = Titanium.UI.createView({
 	backgroundColor:'black',
-	width: '100%',
-	height: '100%',
+	width: '20%',
+	height: '2%',
 	opacity: 0.9,
+	visible: false,
 	iseeyou: false
 });
 
-//	Activity Indicator
-var actInd = Titanium.UI.createActivityIndicator({
-	color: 'white',
-	font: {fontFamily:'Helvetica Neue', fontSize:18, fontWeight:'bold'},
-	message: 'Loading...',
-	style:Ti.UI.iPhone.ActivityIndicatorStyle.PLAIN,
-	height:'auto', 
-	width:'auto'
-});
+detail_win2.add(view);
 
 //
 //	Globally Declared Variables
@@ -82,8 +90,6 @@ var miniMapLatitude = [];
 var miniMapLongitude = [];
 var streamPlayerurl = 'http://thematterofmemory.com/thematterofmemory_scripts/';
 var url = "http://thematterofmemory.com";
-var dateLabel;
-var clockLabel;
 
 // Button so user manually refreshes the map for memory locations
 /*
@@ -105,7 +111,7 @@ var sound = Titanium.Media.createAudioPlayer({
 	
 var positionLeft = 10;
 		
-dateLabel = Titanium.UI.createLabel({
+var dateLabel = Titanium.UI.createLabel({
    text: title,
    color:'#ffffff',
    height: 'auto',
@@ -116,7 +122,7 @@ dateLabel = Titanium.UI.createLabel({
    textAlign: 'TEXT_ALIGNMENT_LEFT'
 });
     
-clockLabel = Titanium.UI.createLabel({
+var clockLabel = Titanium.UI.createLabel({
    text: title,
    color:'#ffffff',
    height: 'auto',
@@ -350,19 +356,16 @@ detail_win2.addEventListener('close', function()
 sound.addEventListener('change',function(e)
 {
     Ti.API.info('State: ' + e.description + ' (' + e.state + ')');
-    if (e.description == 'waiting_for_data' || e.description == 'waiting_for_queue'){
+    if (e.description == 'waiting_for_data' || e.description == 'waiting_for_queue' || e.description == 'starting'){
 
 		detail_win2.add(view);
-		
-		detail_win2.add(actInd);
-		actInd.show();
-		view.iseeyou = true;
+		view.visible = true;
+		activityIndicator.show();
     	Ti.API.info('Waiting for data.');
-    } else if (view.iseeyou == true){
+    } else if (view.visible == true){
     	detail_win2.remove(view);
-    	detail_win2.remove(actInd);
-    	actInd.hide();
-    	view.iseeyou = false;
+    	activityIndicator.hide();
+    	view.visible = false;
     }
 });
 

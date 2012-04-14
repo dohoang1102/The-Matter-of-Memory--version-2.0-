@@ -61,8 +61,8 @@ activityIndicator.zIndex = 9;
 
 var view = Titanium.UI.createView({
 	backgroundColor:'black',
-	width: '20%',
-	height: '2%',
+	width: 'auto',
+	height: 'auto',
 	opacity: 0.9,
 	visible: false,
 	iseeyou: false
@@ -103,7 +103,7 @@ var searchButton = Titanium.UI.createButtonBar({
 // Create audio streaming player
 // load from remote url
 var sound = Titanium.Media.createAudioPlayer({
-	url: url,
+	//url: url,
 	allowBackground: true,
 	preload:false
 });

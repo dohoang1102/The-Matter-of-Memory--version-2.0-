@@ -98,7 +98,7 @@ var countDown =  function( m , s, fn_tick, fn_end  ) {
 	}
 }
 
-var my_timer = new countDown(2,01, 
+var my_timer = new countDown(2,00, 
 		function() {
 			display_lbl.text = my_timer.time.m+" : "+my_timer.time.s;
 		},
@@ -110,7 +110,7 @@ var my_timer = new countDown(2,01,
 	);
 
 var display_lbl =  Titanium.UI.createLabel({
-	text:"2 : 01",
+	text:"2 : 00",
 	height:80,
 	width:320,
 	top:100,
@@ -124,7 +124,7 @@ var display_lbl =  Titanium.UI.createLabel({
 	},
 	textAlign:'center'
 });
-	my_timer.set(2,01);
+	my_timer.set(2,00);
 	
 
 // default compression is Ti.Media.AUDIO_FORMAT_LINEAR_PCM
@@ -397,7 +397,7 @@ win3.add(submitText);
 //	Label: Warning about Time Limit - Modal Window
 //
 var timeLimitModal = Titanium.UI.createLabel({
-	text: 'There is a limit of 1 minute for recording time.',
+	text: 'There is a limit of 2 minutes for recording time.',
 	bottom:50,
 	width:300,
 	textAlign:'center',
@@ -440,6 +440,7 @@ record.addEventListener('click', function(){
 //
 	if (sound && sound.playing){
 		record.enabled = false;
+		record.color = "#333";
 		Titanium.UI.createAlertDialog({title:'Preview', message:'You are previewing and can not record at this time.'}).show();
 		return;
 	} else {
@@ -452,7 +453,7 @@ record.addEventListener('click', function(){
 	modal.add(describeTextModal);
 	modal.add(timeLimitModal);
 	
-	my_timer.set(2,01);
+	my_timer.set(2,00);
 	my_timer.start();
 	recording.start();
 	Ti.Media.startMicrophoneMonitor();
@@ -497,7 +498,9 @@ if (file == null)
 			playback.title = 'Playback Recording';
 			},800);
 		} else {
-			play.enabled = true;
+			record.enabled = true;
+			record.color = "#fff";
+			playback.enabled = true;
 			Ti.API.info("recording file size: "+file.size);
 			sound = Titanium.Media.createSound({sound:file});
 			sound.addEventListener('complete', function()
@@ -510,9 +513,11 @@ if (file == null)
 //	An across the board event. When the phone is recording, the playback button will be disabled. But since a modal comes up, you can not access
 //
 			if(recording.recording){
-				play.enabled = false;
+				playback.enabled = false;
+				playback.color = "#333333";
 				//Titanium.UI.createAlertDialog({title:'One Moment', message:'You need to complete the recording before previewing.'}).show();
 			} else {
+			playback.enabled = true;
 			setTimeout(function(){
 			sound.play();
 			playback.title = 'Stop Playback';

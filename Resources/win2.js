@@ -82,6 +82,8 @@ var miniMapLatitude = [];
 var miniMapLongitude = [];
 var streamPlayerurl = 'http://thematterofmemory.com/thematterofmemory_scripts/';
 var url = "http://thematterofmemory.com";
+var dateLabel;
+var clockLabel;
 
 // Button so user manually refreshes the map for memory locations
 /*
@@ -99,6 +101,35 @@ var sound = Titanium.Media.createAudioPlayer({
 	allowBackground: true,
 	preload:false
 });
+
+	
+var positionLeft = 10;
+		
+dateLabel = Titanium.UI.createLabel({
+   text: title,
+   color:'#ffffff',
+   height: 'auto',
+   width: 'auto',
+   font:{fontFamily:'Arial',fontSize:20,fontWeight:'bold'},
+   top: '5%',
+   left: positionLeft,
+   textAlign: 'TEXT_ALIGNMENT_LEFT'
+});
+    
+clockLabel = Titanium.UI.createLabel({
+   text: title,
+   color:'#ffffff',
+   height: 'auto',
+   font:{fontFamily:'Arial',fontSize:'25%',fontWeight:'bold'},
+   top: '17%',
+   left: positionLeft,
+   textAlign: 'TEXT_ALIGNMENT_LEFT'
+});
+
+
+//the window adds the date.
+detail_win2.add(dateLabel);
+detail_win2.add(clockLabel);
 
 //
 //	BUTTONS FOR STREAMING
@@ -235,7 +266,6 @@ function gpsAnnotations(_coords){
 	xhr.onload = function(){
 	Titanium.API.info('From win2.js & The Matter of Memory.com: ' + this.responseText);
 	incomingData = JSON.parse(this.responseText);
-	displayItems(incomingData);
 	for (var i = 0; i < incomingData.length; i++){
 	recorded = incomingData[i];
 		plotPoints = Titanium.Map.createAnnotation({
@@ -257,29 +287,6 @@ function gpsAnnotations(_coords){
 		}; // end of for loop
 		
 	//Ti.API.info('clock label: ' + recorded.easyclock);
-	
-	var positionLeft = 10;
-		
-   	dateLabel = Titanium.UI.createLabel({
-    text: title,
-    color:'#ffffff',
-    height: 'auto',
-    width: 'auto',
-    font:{fontFamily:'Arial',fontSize:20,fontWeight:'bold'},
-    top: '5%',
-    left: positionLeft,
-    textAlign: 'TEXT_ALIGNMENT_LEFT'
-    });
-    
-    clockLabel = Titanium.UI.createLabel({
-    text: title,
-    color:'#ffffff',
-    height: 'auto',
- 	font:{fontFamily:'Arial',fontSize:'25%',fontWeight:'bold'},
-    top: '17%',
-    left: positionLeft,
-    textAlign: 'TEXT_ALIGNMENT_LEFT'
-    });
     
 	}; // end of xhr.onload()
 
@@ -301,10 +308,6 @@ mapView.addEventListener('click', function(e) {
 
 	//	Create Stream Player
 	sound.url = streamPlayerurl + e.annotation.audioURL;
-    
-    //the window adds the date.
-    detail_win2.add(dateLabel);
-    detail_win2.add(clockLabel);
     
     detail_win2.setToolbar([playButton,flexSpace,pauseButton,flexSpace,rewindButton], {translucent:true});
 
@@ -340,8 +343,6 @@ mapView.addEventListener('click', function(e) {
 
 detail_win2.addEventListener('close', function()
 {
-	detail_win2.remove(dateLabel);
-	detail_win2.remove(clockLabel);
 	sound.stop();
 	Ti.API.info('detail_win2 has closed.');
 });

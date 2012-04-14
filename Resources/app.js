@@ -46,25 +46,12 @@ var tab3 = Titanium.UI.createTab({
 });
 Ti.include('win3.js');
 
-
-var win4 = Titanium.UI.createWindow({  
-    backgroundColor:'#000000',
-    barColor: '#999999'
-});
-var tab4 = Titanium.UI.createTab({  
-    icon:'KS_nav_ui.png',
-    title:'Playback',
-    window:win4
-});
-Ti.include('win4.js');
-
 //
 //  add tabs
 //
 tabGroup.addTab(tab1);  
 tabGroup.addTab(tab2);
 tabGroup.addTab(tab3);
-tabGroup.addTab(tab4);
 
 // open tab group
 tabGroup.open();

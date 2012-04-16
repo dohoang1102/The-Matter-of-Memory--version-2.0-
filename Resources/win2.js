@@ -61,8 +61,8 @@ activityIndicator.zIndex = 9;
 
 var view = Titanium.UI.createView({
 	backgroundColor:'black',
-	width: 'auto',
-	height: 'auto',
+	width: '100%',
+	height: '100%',
 	opacity: 0.9,
 	visible: false,
 	iseeyou: false

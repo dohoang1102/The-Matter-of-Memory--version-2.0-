@@ -152,6 +152,7 @@ var updatedLocation;
 var updatedLatitude;
 var latitude;
 var longitude;
+var datatoWrite;
 var coordinates = 'coordinates';
 
 /*
@@ -177,6 +178,8 @@ var actInd = Titanium.UI.createActivityIndicator({
 	bottom:10,
 	style:Titanium.UI.iPhone.ActivityIndicatorStyle.PLAIN
 });
+
+win3.add(actInd);
 
 //	View to stop anyone from submitting when they are recording
 var view = Titanium.UI.createView({
@@ -241,14 +244,11 @@ movingLocation(gpsCallback);
 
 function gpsCallback(_coords){
 	Ti.API.info(' Recording Window : Latitide : ' + _coords.latitude + ' Longitude : ' + _coords.longitude);
-	var datatoWrite = {
+	datatoWrite = {
 	"latitude": _coords.latitude,
 	"longitude": _coords.longitude
 	};
-	
-	//Data to write?
-	var newFile = Titanium.Filesystem.getFile(newDir.nativePath,"coordinates.JSON");
-	newFile.write(JSON.stringify(datatoWrite));
+	//This data will be written into a JSON file once the 'Done' button is hit while in Record mode.
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -275,6 +275,7 @@ var record = Titanium.UI.createButton({
 	color:"#fff",
 	enabled: true
 });
+
 win3.add(record);
 
 //
@@ -290,6 +291,7 @@ var describeTitle = Titanium.UI.createLabel({
 	height:'auto',
 	color:'#CCC'
 });
+
 win3.add(describeTitle);
 
 //
@@ -305,6 +307,7 @@ var describeText = Titanium.UI.createLabel({
 	height:'auto',
 	color:'#CCC'
 });
+
 win3.add(describeText);
 
 //
@@ -355,6 +358,7 @@ var playbackText = Titanium.UI.createLabel({
 	height:'auto',
 	color:'#CCC'
 });
+
 win3.add(playbackText);
 
 //
@@ -391,6 +395,7 @@ var submitText = Titanium.UI.createLabel({
 	height:'auto',
 	color:'#CCC'
 });
+
 win3.add(submitText);
 
 //
@@ -435,43 +440,34 @@ record.addEventListener('click', function(){
 		title:'Error!',
 		message:'No audio recording hardware is currently connected.'
 		}).show();
-	};
-//	
-//	An across the board event. When there is sound playing, the record button will be disabled.
-//
-	if (sound_01 && sound_01.playing){
-		record.enabled = false;
-		record.color = "#333";
-		Titanium.UI.createAlertDialog({title:'Preview', message:'You are previewing and can not record at this time.'}).show();
-		return;
-		
 	} else {
-	
 	// Once you've hit the record button, the modal window will come up with all of these options.	
 	var done = Titanium.UI.createButton({
 		systemButton:Titanium.UI.iPhone.SystemButton.DONE
-	});
+		});
 	modal.setRightNavButton(done);
 	modal.add(describeTextModal);
 	modal.add(timeLimitModal);
-	
+	//Setting up timer
 	my_timer.set(2,00);
 	my_timer.start();
+	//Recording now
 	recording.start();
 	Ti.Media.startMicrophoneMonitor();
 	duration = 0;
 	modal.add(display_lbl);
-	
-	done.addEventListener('click',function()
-	{
+		done.addEventListener('click',function()
+		{
 		my_timer.stop();
 		modal.close();
 		stopRecording();
-	});
-	// This is the actual bit that opens Modal.
+		//Writing the coordinate information once the 'Done' button has been pressed to the variable 'datatoWrite'.
+		var newFile = Titanium.Filesystem.getFile(newDir.nativePath,"coordinates.JSON");
+		newFile.write(JSON.stringify(datatoWrite));
+		});
+	// This is the actual part that opens the Modal window.
 	modal.open({modal:true});
-	}
-	
+	}	
 });
 
 
@@ -493,6 +489,12 @@ playback.addEventListener('click', function(){
 			sound_01.stop();
 			sound_01.release();
 			playback.title = 'Playback Recording';
+			//Re-enabling the Record Button
+			record.enabled = true;
+			record.color = "#fff"; 
+			//Re-enabled the Submit Button
+			upload.enabled = true;
+			upload.color = "#fff";
 			Ti.API.info('Sound exists and is playing; it should now be stopped and returned to normal.');
 			//If someone has already hit the record button and is recording a memory.
 		} else if (recording.recording) {
@@ -525,13 +527,12 @@ playback.addEventListener('click', function(){
 				upload.color = "#fff";
 				Ti.API.info('Yay, back to normal')
 				});
-			}
+		}
 });
 
 //
 //	Function to send to server
 //
-
 function sendtoserver() {
 //	Create view that will block out the other Table options while sending to the server.
 	try {
@@ -543,19 +544,17 @@ function sendtoserver() {
 			});
 		
 			win3.add(view);
+			
 			//	Activity Indicator
-			win3.add(actInd);
 			actInd.show();
 
 			//	Progress Bar
 			win3.add(progressBar);
 			progressBar.show();
 			
-			tabGroup.animate({bottom:-50, duration:500});
 			xhr.onerror = function(e)
 			{
-				tabGroup.animate({bottom:0,duration:500});
-		//	If there is an error in the upload , alert to say "Connection Lost" and restore controls and remove activity indicator
+			//	If there is an error in the upload , alert to say "Connection Lost" and restore controls and remove activity indicator
 			setTimeout(function(){
 				lostServer.show();
 				},500);
@@ -564,9 +563,12 @@ function sendtoserver() {
 				lostServer.hide();
 				},3000);
 			Titanium.API.info('IN ERROR' + e.error);
+			//Restorting everything back to normal after error.
+			//Taking out blocking view
 			win3.remove(view);
+			//Hiding activity view
 			actInd.hide();
-			win3.remove(actInd);
+			//Taking out the progress bar completely.
 			progressBar.hide();
 			progressBar.value = 0;
 			win3.remove(progressBar);
@@ -575,49 +577,48 @@ function sendtoserver() {
 	xhr.onload = function(e)
 	{
 	if (this.status == '404') {
+		//	If the upload results in a not found page
 		Ti.API.info('error: http status code ' + this.status);
-		tabGroup.animate({bottom:0,duration:500});
 		setTimeout(function(){
 			lostServer.show(); // was successDisplay.show
 			},500);
 	
-			setTimeout(function(){
-				lostServer.hide();
-				},3000);
-				//	If the upload results in a not found page
+		setTimeout(function(){
+			lostServer.hide();
+			},3000);
+
 		win3.remove(view);
 		actInd.hide();
-		win3.remove(actInd);
+
 		progressBar.hide();
 		progressBar.value = 0;
 		win3.remove(progressBar);
 		file = null;
-	} else {
-		Ti.API.info('http status code ' + this.status);
-		tabGroup.animate({bottom:0,duration:500});
-		setTimeout(function(){
-			successDisplay.show();
-			},500);
+		} else {
+			Ti.API.info('http status code ' + this.status);
+			setTimeout(function(){
+				successDisplay.show();
+				},500);
 	
 			setTimeout(function(){
 				successDisplay.hide();
 				},3000);
 				//	If the upload is successful, alert to say "Success" and restore controls and remove activity indicator
-		win3.remove(view);
-		actInd.hide();
-		win3.remove(actInd);
-		progressBar.hide();
-		progressBar.value = 0;
-		win3.remove(progressBar);
-		file = null;
-	}
+			win3.remove(view);
+			actInd.hide();
+
+			progressBar.hide();
+			progressBar.value = 0;
+			win3.remove(progressBar);
+			file = null;
+		}
 };
 
 xhr.onsendstream = function(e)
-{
+	{
 		progressBar.value = e.progress ;
 		Titanium.API.info('ONSENDSTREAM - PROGRESS: ' + e.progress);
-};
+	};
 //	open the client
 xhr.open('POST', posturl, false);
 xhr.send(postData);
@@ -635,6 +636,7 @@ xhr.send(postData);
 	}
 
 }; // end of Sendtoserver function
+
 
 //
 //	Button - Upload - Event!

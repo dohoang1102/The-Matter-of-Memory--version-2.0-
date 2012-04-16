@@ -49,7 +49,7 @@ var modal = Ti.UI.createWindow({
 Titanium.Media.audioSessionMode = Ti.Media.AUDIO_SESSION_MODE_PLAY_AND_RECORD;
 var recording = Ti.Media.createAudioRecorder();
 var file;
-var sound;
+var sound_01;
 var audioName = 'recording';
 var newAudiofile = 'recording.mp4';
 var file_recorded = Titanium.Filesystem.getFile(newDir.nativePath, newAudiofile);
@@ -438,7 +438,7 @@ record.addEventListener('click', function(){
 //	
 //	An across the board event. When there is sound playing, the record button will be disabled.
 //
-	if (sound && sound.playing){
+	if (sound_01 && sound_01.playing){
 		record.enabled = false;
 		record.color = "#333";
 		Titanium.UI.createAlertDialog({title:'Preview', message:'You are previewing and can not record at this time.'}).show();
@@ -478,53 +478,38 @@ record.addEventListener('click', function(){
 //
 	
 playback.addEventListener('click', function(){
-if (file == null) 
-	{
+	// If there is no file that has been recorded.
+	if (file == null) 
+		{
 		Titanium.UI.createAlertDialog({
 		title:'Error',
 		message:'You need to record something first!'
 		}).show();
 		return;
-	} else {
-//
-//	An across the board event. When there is sound playing, the play button takes 800ms to reset the sound and revert the playback title.
-//
-		if (sound && sound.playing)
-		{
-			setTimeout(function(){
-			sound.stop();
-			sound.release();
-			sound = null;
+		} else if (sound_01 && sound_01.playing){
+			//If the button has already been hit and there is sound playing.
+			sound_01.stop();
+			sound_01.release();
 			playback.title = 'Playback Recording';
-			},800);
-		} else {
-			record.enabled = true;
-			record.color = "#fff";
-			playback.enabled = true;
-			Ti.API.info("recording file size: "+file.size);
-			sound = Titanium.Media.createSound({sound:file});
-			sound.addEventListener('complete', function()
-				{
-				setTimeout(function(){
-				playback.title = 'Playback Recording';
-				},800);
-				});
-//
-//	An across the board event. When the phone is recording, the playback button will be disabled. But since a modal comes up, you can not access
-//
-			if(recording.recording){
-				playback.enabled = false;
-				playback.color = "#333333";
-				//Titanium.UI.createAlertDialog({title:'One Moment', message:'You need to complete the recording before previewing.'}).show();
-			} else {
-			playback.enabled = true;
-			setTimeout(function(){
-			sound.play();
-			playback.title = 'Stop Playback';
-		},800);
-			}
+			Ti.API.info('Sound exists and is playing; it should now be stopped and returned to normal.');
+			//If someone has already hit the record button and is recording a memory.
+		} else if (recording.recording) {
+			Ti.API.info('It was recording and you hit this? Why?');
+			playback.enabled = false;
+			playback.color = "#333333";
 		}
-	}
+		//There was something recorded, now we are playing it back.
+		else {
+			sound_01 = Titanium.Media.createSound({url:newAudiofile});
+			sound_01.play();
+			Ti.API.info('Sound should be coming out now.');
+			playback.enabled = true;
+			playback.title = 'Stop Playback';
+			sound_01.addEventListener('complete', function(){
+			playback.title = 'Playback Recording'; 
+			Ti.API.info('Yay, back to normal')
+			});
+		}
 });
 
 //
@@ -648,7 +633,7 @@ if (file == null)
 		}).show();
 		return;
 		} else {
-			if (sound && sound.playing || recording.recording)
+			if (sound_01 && sound_01.playing || recording.recording)
 			{
 				Titanium.UI.createAlertDialog({title:'To Submit', message:'Make sure to stop recording and stop playback before submitting.'}).show();
 					} else if (file != null){

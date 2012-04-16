@@ -429,6 +429,7 @@ function stopRecording(){
 //	Button - Ready to Record - Event!
 //
 record.addEventListener('click', function(){
+	//If the device is unable to record
 	if (!Ti.Media.canRecord) {
 		Ti.UI.createAlertDialog({
 		title:'Error!',
@@ -443,6 +444,7 @@ record.addEventListener('click', function(){
 		record.color = "#333";
 		Titanium.UI.createAlertDialog({title:'Preview', message:'You are previewing and can not record at this time.'}).show();
 		return;
+		
 	} else {
 	
 	// Once you've hit the record button, the modal window will come up with all of these options.	
@@ -497,19 +499,33 @@ playback.addEventListener('click', function(){
 			Ti.API.info('It was recording and you hit this? Why?');
 			playback.enabled = false;
 			playback.color = "#333333";
-		}
-		//There was something recorded, now we are playing it back.
-		else {
+		} else {
+			//There was something recorded, now we are playing it back.
 			sound_01 = Titanium.Media.createSound({url:newAudiofile});
 			sound_01.play();
 			Ti.API.info('Sound should be coming out now.');
 			playback.enabled = true;
+			//Disabling the Record button while it is playing back
+			record.enabled = false;
+			record.color = "#333";
+			//Disabling the Submit button while it is playing back
+			upload.enabled = false;
+			upload.color = "#333";
+			//Changing the playback title to reflect that now the audio is playing.
 			playback.title = 'Stop Playback';
-			sound_01.addEventListener('complete', function(){
-			playback.title = 'Playback Recording'; 
-			Ti.API.info('Yay, back to normal')
-			});
-		}
+				//Once the playback has finised. We are going to return everything back to normal.
+				sound_01.addEventListener('complete', function(){
+				//playback title goes back to normal
+				playback.title = 'Playback Recording';
+				//Re-enabling the Record Button
+				record.enabled = true;
+				record.color = "#fff"; 
+				//Re-enabled the Submit Button
+				upload.enabled = true;
+				upload.color = "#fff";
+				Ti.API.info('Yay, back to normal')
+				});
+			}
 });
 
 //
@@ -625,19 +641,18 @@ xhr.send(postData);
 //
 	
 upload.addEventListener('click', function(e){
-if (file == null)
-	{
+	if (file == null)
+		{
 		Titanium.UI.createAlertDialog({
 		title:'Error',
 		message:'You need to record something first!'
 		}).show();
 		return;
-		} else {
-			if (sound_01 && sound_01.playing || recording.recording)
-			{
-				Titanium.UI.createAlertDialog({title:'To Submit', message:'Make sure to stop recording and stop playback before submitting.'}).show();
-					} else if (file != null){
-						sendtoserver();
-						}
-			}
+		} else if (sound_01 && sound_01.playing || recording.recording) {
+			upload.enabled = false;
+			upload.color = "#333333";
+			Titanium.UI.createAlertDialog({title:'To Submit', message:'Make sure to stop recording and stop playback before submitting.'}).show();
+				} else if (file != null){
+				sendtoserver();
+				}
 });

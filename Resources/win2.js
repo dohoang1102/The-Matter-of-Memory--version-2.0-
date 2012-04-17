@@ -307,6 +307,10 @@ function gpsAnnotations(_coords){
 mapView.addEventListener('click', function(e) {
     if (e.clicksource == 'rightButton') {
 
+	//If there is sound playing from the memory you just recorded and are about to listen to a recording someone else made - let us stop your playback.
+		if (sound_01.play()) {
+			sound_01.stop();
+		} else {
 	//calls the 'date' array from when the annotations was being created and will substitute the 'text' field
 	//within the 'dateLabel'. It will be replaced everytime without overlap.
 	dateLabel.text = e.annotation.date;
@@ -344,8 +348,9 @@ mapView.addEventListener('click', function(e) {
 
 	tabGroup.activeTab.open(detail_win2,{animated:true})
 	sound.start();
-    }
-});
+		} // else
+   } //	if
+}); //	if mapView right_click has been hit.
 
 detail_win2.addEventListener('close', function()
 {

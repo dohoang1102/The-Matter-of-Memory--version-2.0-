@@ -441,6 +441,8 @@ record.addEventListener('click', function(){
 		message:'No audio recording hardware is currently connected.'
 		}).show();
 	} else {
+	//In case someone is listening to a memory on the other tab group - let us stop that.
+	sound.stop();
 	// Once you've hit the record button, the modal window will come up with all of these options.	
 	var done = Titanium.UI.createButton({
 		systemButton:Titanium.UI.iPhone.SystemButton.DONE
@@ -485,7 +487,7 @@ playback.addEventListener('click', function(){
 		}).show();
 		return;
 		} else if (sound_01 && sound_01.playing){
-			//If the button has already been hit and there is sound playing.
+			//If the button has already been hit and there is sound playing. We make it go back to normal.
 			sound_01.stop();
 			sound_01.release();
 			playback.title = 'Playback Recording';
@@ -503,6 +505,9 @@ playback.addEventListener('click', function(){
 			playback.color = "#333333";
 		} else {
 			//There was something recorded, now we are playing it back.
+			//Making an instance in case someone recorded something. Then decided to go back and listen to a memory,
+			//and then try and listen to the very recording they just did? We will have to stop that sound from coming through.
+			sound.stop();
 			sound_01 = Titanium.Media.createSound({url:newAudiofile});
 			sound_01.play();
 			Ti.API.info('Sound should be coming out now.');

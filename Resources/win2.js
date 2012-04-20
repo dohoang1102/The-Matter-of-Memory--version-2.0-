@@ -299,56 +299,51 @@ function gpsAnnotations(_coords){
 	xhr.send();
 };
 
-//	This is needed for the error within Titanium Mobile that when removeing the 'regionChanged' event listener. It will freeze the map.
-//mapView.addEventListener('singletap', function(){
-//	searching();
-//});
-
 mapView.addEventListener('click', function(e) {
     if (e.clicksource == 'rightButton') {
 
 	//If there is sound playing from the memory you just recorded and are about to listen to a recording someone else made - let us stop your playback.
-		if (sound_01.play()) {
-			sound_01.stop();
-		} else {
-	//calls the 'date' array from when the annotations was being created and will substitute the 'text' field
-	//within the 'dateLabel'. It will be replaced everytime without overlap.
-	dateLabel.text = e.annotation.date;
-	clockLabel.text = e.annotation.easyClock;
+	//	if (sound_01 != null) {
+	//		sound_01.stop();
+	//	} else {
+		//calls the 'date' array from when the annotations was being created and will substitute the 'text' field
+		//within the 'dateLabel'. It will be replaced everytime without overlap.
+		dateLabel.text = e.annotation.date;
+		clockLabel.text = e.annotation.easyClock;
 
-	//	Create Stream Player
-	sound.url = streamPlayerurl + e.annotation.audioURL;
+		//	Create Stream Player
+		sound.url = streamPlayerurl + e.annotation.audioURL;
     
-    detail_win2.setToolbar([playButton,flexSpace,pauseButton,flexSpace,rewindButton], {translucent:true});
+    	detail_win2.setToolbar([playButton,flexSpace,pauseButton,flexSpace,rewindButton], {translucent:true});
 
-	var miniPlotPoints = Titanium.Map.createAnnotation({
-	latitude: e.annotation.latitude,
-	longitude: e.annotation.longitude,
-	title: 'Memory',
-	animate:true
-	});
+		var miniPlotPoints = Titanium.Map.createAnnotation({
+		latitude: e.annotation.latitude,
+		longitude: e.annotation.longitude,
+		title: 'Memory',
+		animate:true
+		});
 	
-	miniPlotPoints.pincolor = Titanium.Map.ANNOTATION_GREEN;
+		miniPlotPoints.pincolor = Titanium.Map.ANNOTATION_GREEN;
 
-	var mapMiniView = Ti.Map.createView({
-	bottom: '13%',
-	height: '50%',
-	width: '98%',
-	userLocation: false,
-	mapType: Ti.Map.STANDARD_TYPE,
-	animate: false,
-	regionFit: true,
-	borderColor: 'black',
-	borderWidth: 4,
-	region: {latitude: e.annotation.miniMapLatitude, longitude: e.annotation.miniMapLongitude, latitudeDelta: 0.0001, longitudeDelta: 0.0001}
-	});
+		var mapMiniView = Ti.Map.createView({
+		bottom: '13%',
+		height: '50%',
+		width: '98%',
+		userLocation: false,
+		mapType: Ti.Map.STANDARD_TYPE,
+		animate: false,
+		regionFit: true,
+		borderColor: 'black',
+		borderWidth: 4,
+		region: {latitude: e.annotation.miniMapLatitude, longitude: e.annotation.miniMapLongitude, latitudeDelta: 0.0001, longitudeDelta: 0.0001}
+		});
 	
-	mapMiniView.addAnnotation(miniPlotPoints);
-	detail_win2.add(mapMiniView);
+		mapMiniView.addAnnotation(miniPlotPoints);
+		detail_win2.add(mapMiniView);
 
-	tabGroup.activeTab.open(detail_win2,{animated:true})
-	sound.start();
-		} // else
+		tabGroup.activeTab.open(detail_win2,{animated:true})
+		sound.start();
+	//	} // else
    } //	if
 }); //	if mapView right_click has been hit.
 

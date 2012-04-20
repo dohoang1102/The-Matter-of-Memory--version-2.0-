@@ -2,7 +2,7 @@
 Titanium.UI.setBackgroundColor('#000');
 
 // create tab group
-var tabGroup = Titanium.UI.createTabGroup();
+var tabGroup = Titanium.UI.createTabGroup({id:'tabGroup1'});
 
 
 //
@@ -55,3 +55,22 @@ tabGroup.addTab(tab3);
 
 // open tab group
 tabGroup.open();
+
+// blur event listener for tracking tab changes
+tabGroup.addEventListener('blur', function(e)
+{
+	if (sound_01 != null) {
+		sound_01.stop();
+		sound_01.release();
+			playback.title = 'Playback Recording';
+			//Re-enabling the Record Button
+			record.enabled = true;
+			record.color = "#fff"; 
+			//Re-enabled the Submit Button
+			upload.enabled = true;
+			upload.color = "#fff";
+			Ti.API.info('Sound exists and is playing; it should now be stopped and returned to normal.');
+			//If someone has already hit the record button and is recording a memory.
+	}
+	Titanium.API.info('tab blur - new index ' + e.index + ' old index ' + e.previousIndex);
+});

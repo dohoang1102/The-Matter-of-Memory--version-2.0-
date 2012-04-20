@@ -2,7 +2,7 @@
 Titanium.UI.setBackgroundColor('#000');
 
 // create tab group
-var tabGroup = Titanium.UI.createTabGroup({id:'tabGroup1'});
+var tabGroup = Titanium.UI.createTabGroup();
 
 
 //
@@ -56,9 +56,10 @@ tabGroup.addTab(tab3);
 // open tab group
 tabGroup.open();
 
-// blur event listener for tracking tab changes
+// blur event listener for tracking tab changes, this is to make sure that if someone is playing audio from the "record" tab, that it won't bleed over if they tried to listen ot a memory at the same time.
 tabGroup.addEventListener('blur', function(e)
 {
+	//if there is information in the sound_01 variable, proceed with stopping it and resetting everything in the win3.js window
 	if (sound_01 != null) {
 		sound_01.stop();
 		sound_01.release();

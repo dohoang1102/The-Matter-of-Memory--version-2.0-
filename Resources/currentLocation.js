@@ -4,8 +4,8 @@
 
 Titanium.Geolocation.purpose = "Receive User Location";
 Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_NEAREST_TEN_METERS;
-//	Set Distance filter. This dictates how often an event fires based on the distance the device moves. This value is in meters. 10 meters = 33 feet.
-Titanium.Geolocation.distanceFilter = 10;
+//	Set Distance filter. This dictates how often an event fires based on the distance the device moves. This value is in meters. 30.48 meters = 100 feet.
+Titanium.Geolocation.distanceFilter = 30.48;
 
 if (Titanium.Geolocation.locationServicesEnabled)
 {
@@ -41,8 +41,8 @@ function movingLocation(_callback){
 		Ti.API.error('Error: ' + e.error);
 		return;
 		} else {
-		Ti.API.info('got location from Geolocation event listener :' + JSON.stringify(e.coords));
-		Ti.App.fireEvent('location.updated',e.coords);
+		Ti.API.info('App.fireEvent of location.updated successful : ' + JSON.stringify(e.coords));
+		//Ti.App.fireEvent('location.updated',e.coords);
 		
 		if (_callback) {
 			_callback(e.coords);

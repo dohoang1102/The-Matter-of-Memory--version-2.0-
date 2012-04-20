@@ -236,14 +236,14 @@ var postData = {
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//	Geolocation is triggered within 10 meters. That location is written onto a writeable directory within Titanium Appcelerator's file structure //
+//	Geolocation is triggered within 30.48 meters. That location is written onto a writeable directory within Titanium Appcelerator's file structure //
 //	and have it saved to then be uploaded whenever.																								 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 movingLocation(gpsCallback);
 
 function gpsCallback(_coords){
-	Ti.API.info(' Recording Window : Latitide : ' + _coords.latitude + ' Longitude : ' + _coords.longitude);
+	Ti.API.info(' Recording Window : Latitude : ' + _coords.latitude + ' Longitude : ' + _coords.longitude);
 	datatoWrite = {
 	"latitude": _coords.latitude,
 	"longitude": _coords.longitude

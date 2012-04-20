@@ -10,20 +10,14 @@
 win2.backgroundColor = 'black';
 Ti.include('currentLocation.js');
 
-// Global Listener
-Ti.App.addEventListener('location.updated', function(coords){
-	Ti.API.debug(JSON.stringify(coords));
-	Ti.API.info('from Global eventlistener :' + JSON.stringify(coords.longitude));
-	var latitude = JSON.stringify(coords.latitude);
-	var longitude = JSON.stringify(coords.longitude);
-});
-
+/*
 Ti.App.addEventListener('current.position', function(coords){
 	Ti.API.info('from Global eventlistener & current position longitude: ' + JSON.stringify(coords.longitude));
 	Ti.API.info('from Global eventListener & current position latitude : ' + JSON.stringify(coords.latitude));
 	var currentLatitude = JSON.stringify(coords.latitude);
 	var currentLongitude = JSON.stringify(coords.longitude);
 });
+*/
 
 var detail_win2 = Titanium.UI.createWindow({
 	title:'Map View', 
@@ -49,7 +43,7 @@ var activityIndicator = Ti.UI.createActivityIndicator({
   color: 'white',
   font: {fontFamily:'Helvetica Neue', fontSize:20, fontWeight:'normal'},
   message: 'Loading...',
-  style:Ti.UI.iPhone.ActivityIndicatorStyle.DARK,
+  style:Ti.UI.iPhone.ActivityIndicatorStyle.PLAIN,
   top:'auto',
   left:'auto',
   height:'auto',
@@ -239,11 +233,12 @@ movingLocation(gpsAnnotations);
 // To center the map whenever there is movement from the user. Helpful if the user is travelling at higher speeds, will continue to the center the map.
 function gpsCallback(_coords){
 	Ti.API.info('win2.js gpsCallback(_coords) function affecting mapView.setLocation({}); Latitude: ' + _coords.latitude + ' Longitude: ' + _coords.longitude);
-		mapView.setLocation({
-		latitude: _coords.latitude,
-		longitude: _coords.longitude,
-		animate: true
+	mapView.setLocation({
+	latitude: _coords.latitude,
+	longitude: _coords.longitude,
+	animate: true
 	});
+
 }
 
 //	This function will run though the 'annotations' array() and remove them from the mapView. Then will set them to an empty array.
@@ -255,6 +250,7 @@ function removeAnnotations(){
 }
 
 function gpsAnnotations(_coords){
+
 	removeAnnotations();
 	var geturl="http://thematterofmemory.com/thematterofmemory_scripts/memorymappingcoordinates.php?latitude=" + _coords.latitude + "&longitude=" + _coords.longitude;
 	Titanium.API.info('Region Changed: ' + geturl);
@@ -297,6 +293,7 @@ function gpsAnnotations(_coords){
 	}; // end of xhr.onload()
 
 	xhr.send();
+
 };
 
 mapView.addEventListener('click', function(e) {

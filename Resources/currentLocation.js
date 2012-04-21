@@ -22,8 +22,8 @@ function currentLocation(_callback){
 			//	_callback(null);
 			//}
 		} else {
-			Ti.API.info('got a location from currentPosition from function currentLocation :' + JSON.stringify(e));
-			Ti.App.fireEvent('current.position',e.coords);
+			//Ti.API.info('got a location from currentPosition from function currentLocation :' + JSON.stringify(e));
+			//Ti.App.fireEvent('current.position',e.coords);
 			
 			if (_callback) {
 				_callback(e.coords);
@@ -41,7 +41,7 @@ function movingLocation(_callback){
 		Ti.API.error('Error: ' + e.error);
 		return;
 		} else {
-		Ti.API.info('App.fireEvent of location.updated successful : ' + JSON.stringify(e.coords));
+		//Ti.API.info('App.fireEvent of location.updated successful : ' + JSON.stringify(e.coords));
 		//Ti.App.fireEvent('location.updated',e.coords);
 		
 		if (_callback) {

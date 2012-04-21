@@ -86,13 +86,13 @@ var streamPlayerurl = 'http://thematterofmemory.com/thematterofmemory_scripts/';
 var url = "http://thematterofmemory.com";
 
 // Button so user manually refreshes the map for memory locations
-/*
+
 var searchButton = Titanium.UI.createButtonBar({
 	labels:['Search this area for memory locations'],
 	backgroundColor:'#666',
 	width:250
 });
-*/
+
 
 // Create audio streaming player
 // load from remote url
@@ -366,9 +366,10 @@ sound.addEventListener('change',function(e)
     }
 });
 
-//searchButton.addEventListener('click', region_changing);
+//searchButton.addEventListener('click', );
+
 win2.add(mapView);
-//win2.setToolbar([flexSpace,searchButton,flexSpace]);
+win2.setToolbar([flexSpace,searchButton,flexSpace]);
 
 Ti.App.addEventListener('pause', function(e) {
     // app is paused during phone call, so pause the stream

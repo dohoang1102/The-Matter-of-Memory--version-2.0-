@@ -578,7 +578,7 @@ function sendtoserver() {
 			progressBar.value = 0;
 			win3.remove(progressBar);
 		};
-	xhr.setTimeout(90000);
+	xhr.setTimeout(5000);
 	xhr.onload = function(e)
 	{
 	if (this.status == '404') {

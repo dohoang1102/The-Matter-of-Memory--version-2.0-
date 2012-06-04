@@ -72,6 +72,7 @@ detail_win2.add(view);
 var incomingData;
 var recorded = [];
 var plotPoints;
+var plotPointsFarther; //
 var updateAnnotations;
 var uploadGPS = '';
 var annotations = [];
@@ -252,7 +253,7 @@ function removeAnnotations(){
 function gpsAnnotations(_coords){
 
 	removeAnnotations();
-	var geturl="http://thematterofmemory.com/thematterofmemory_scripts/memorymappingcoordinates.php?latitude=" + _coords.latitude + "&longitude=" + _coords.longitude;
+	var geturl="http://thematterofmemory.com/thematterofmemory_scripts/memorymappingcoordinatesfarther.php?latitude=" + _coords.latitude + "&longitude=" + _coords.longitude;
 	Titanium.API.info('Region Changed: ' + geturl);
 	
 	var xhr = Titanium.Network.createHTTPClient();
@@ -282,9 +283,23 @@ function gpsAnnotations(_coords){
 		audioURL: recorded.AudioURL,
 		rightButton: Titanium.UI.iPhone.SystemButton.DISCLOSURE,
 		animate:true
+		});/*
+		plotPointsFarther = Ti.Map.createAnnotation({
+		latitude: recorded.LatitudeFarther,
+		longitude: recorded.LongitudeFarther,
+		miniMapLatitude: recorded.LatitudeFarther,
+		miniMapLongitude: recorded.LongitudeFarther,
+		title: 'Far Memory',
+		animate: true
 		});
+	plotPointsFarther.pincolor = Titanium.Map.ANNOTATION_RED;*/
+	
 	plotPoints.pincolor = Titanium.Map.ANNOTATION_GREEN;
+	
+	//mapView.addAnnotation(plotPointsFarther);
 	mapView.addAnnotation(plotPoints);
+	
+	//annotations.push(plotPointsFarther);
 	annotations.push(plotPoints);
 		}; // end of for loop
 		
@@ -369,7 +384,7 @@ sound.addEventListener('change',function(e)
 //searchButton.addEventListener('click', );
 
 win2.add(mapView);
-win2.setToolbar([flexSpace,searchButton,flexSpace]);
+//win2.setToolbar([flexSpace,searchButton,flexSpace]);
 
 Ti.App.addEventListener('pause', function(e) {
     // app is paused during phone call, so pause the stream
